@@ -72,8 +72,8 @@ public class FQSelect: FQPart {
         for (index, field) in fields.enumerated() {
             if index > 0 {
                 result.append(",")
+                result.append(FluentQueryNextLine)
             }
-            result.append(FluentQueryNextLine)
             result.append(field.query)
         }
         
