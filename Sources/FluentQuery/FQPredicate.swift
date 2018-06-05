@@ -47,7 +47,7 @@ public class FQJoinPredicate<M, V, N, W>: FQPart, FQPredicateGenericType where M
 }
 
 public class FQPredicate<M, V>: FQPart, FQPredicateGenericType  where M: Model{
-    enum FQPredicateValue: FQPredicateValueProtocol {
+    public enum FQPredicateValue: FQPredicateValueProtocol {
         case simple(V)
         case simpleOptional(V?)
         case simpleAny(Any)
@@ -56,7 +56,7 @@ public class FQPredicate<M, V>: FQPart, FQPredicateGenericType  where M: Model{
         case arrayOfAny([Any])
         case string(String)
         
-        var description: String {
+        public var description: String {
             let description: String
             switch self {
             case .simple:
@@ -98,7 +98,7 @@ public class FQPredicate<M, V>: FQPart, FQPredicateGenericType  where M: Model{
             return value
         }
         
-        static func ==(lhs: FQPredicateValue, rhs: FQPredicateValue) -> Bool {
+        public static func ==(lhs: FQPredicateValue, rhs: FQPredicateValue) -> Bool {
             return lhs.description == rhs.description
         }
     }
