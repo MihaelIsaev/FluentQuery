@@ -11,13 +11,8 @@ public class FQOrderBy: FQPart {
         var path: String
         var mode: Mode
         
-        public init<M, V>(_ kp: KeyPath<M, V>, _ mode: Mode) where M: Model {
-            self.path = FluentQuery.formattedPath(M.FQType.self, kp)
-            self.mode = mode
-        }
-        
-        public init<M, V>(_ alias: AliasedKeyPath<M, V>, _ mode: Mode) {
-            self.path = alias.query
+        public init<T>(_ kp: T, _ mode: Mode) where T: FQUniversalKeyPath {
+            self.path = kp.queryValue
             self.mode = mode
         }
         
@@ -30,34 +25,19 @@ public class FQOrderBy: FQPart {
     
     public init () {}
     
-    public init<M, V>(_ kp: KeyPath<M, V>, _ mode: Mode) where M: Model {
+    public init<T>(_ kp: T, _ mode: Mode) where T: FQUniversalKeyPath {
         add(kp, mode)
     }
     
-    public init<M, V>(_ alias: AliasedKeyPath<M, V>, _ mode: Mode) where M: Model {
-        add(alias, mode)
-    }
-    
     @discardableResult
-    public func add<M, V>(_ kp: KeyPath<M, V>, _ mode: Mode) -> Self where M: Model {
+    public func add<T>(_ kp: T, _ mode: Mode) -> Self where T: FQUniversalKeyPath {
         parts.append(Data(kp, mode))
         return self
     }
     
     @discardableResult
-    public func add<M, V>(_ alias: AliasedKeyPath<M, V>, _ mode: Mode) -> Self where M: Model {
-        parts.append(Data(alias, mode))
-        return self
-    }
-    
-    @discardableResult
-    public func and<M, V>(_ kp: KeyPath<M, V>, _ mode: Mode) -> Self where M: Model {
+    public func and<T>(_ kp: T, _ mode: Mode) -> Self where T: FQUniversalKeyPath {
         return add(kp, mode)
-    }
-    
-    @discardableResult
-    public func and<M, V>(_ alias: AliasedKeyPath<M, V>, _ mode: Mode) -> Self where M: Model {
-        return add(alias, mode)
     }
     
     public var query: String {

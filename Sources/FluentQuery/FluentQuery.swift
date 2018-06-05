@@ -18,7 +18,7 @@ public enum FluentQueryPredicateOperator: String {
 }
 
 public class FluentQuery: FQPart {
-    public var selectFields: [FQPart] = []
+    public var select: FQSelect = FQSelect()
     public var froms: [FQPart] = []
     public var joins: [FQJoinGenericType] = []
     public var `where`: FQWhere?
@@ -30,47 +30,38 @@ public class FluentQuery: FQPart {
     
     public init() {}
     
+    public func select(_ select: FQSelect) {
+        self.select.joinAnotherInstance(select)
+    }
+    
+    @available(*, deprecated: 1.0, message: "will soon become unavailable.")
     public func select(_ str: String) -> Self {
-        selectFields.append(str)
+        select.field(str)
         return self
     }
     
-    public func select<T, V>(_ kp: KeyPath<T, V>) -> Self where T: Model {
-        selectFields.append(FluentQuery.formattedPath(T.FQType.self, kp))
+    public func select<T>(all: T.Type) -> Self where T: Model {
+        select.all(all)
         return self
     }
     
-    public func select<T, V>(_ alias: AliasedKeyPath<T, V>) -> Self where T: Model {
-        selectFields.append(alias.query)
+    public func select<T>(_ kp: T, as: String? = nil) -> Self where T: FQUniversalKeyPath {
+        select.field(kp)
         return self
     }
     
-    public func select<T, V>(distinct kp: KeyPath<T, V>) -> Self where T: Model {
-        selectFields.append("DISTINCT \(FluentQuery.formattedPath(T.FQType.self, kp))")
+    public func select<T>(distinct kp: T, as: String? = nil) -> Self where T: FQUniversalKeyPath {
+        select.distinct(kp, as: `as`)
         return self
     }
     
-    public func select<T, V>(distinct alias: AliasedKeyPath<T, V>) -> Self where T: Model {
-        selectFields.append(alias.query)
-        return self
-    }
-    
-    public func select<T, V>(count table: FQTable<T>.Type, path kp: KeyPath<T, V>, as asKey: String) -> Self {
-        selectFields.append("COUNT(\(FluentQuery.formattedPath(table, kp))) as \"\(asKey)\"")
+    public func select<T>(count kp: T, as: String? = nil) -> Self where T: FQUniversalKeyPath{
+        select.func(.count(kp), path: kp, as: `as`) //TODO
         return self
     }
     
     public func select(as: String? = nil, _ json: FQJSON) -> Self {
-        selectFields.append(FQJSON.ForSelectField(json, as: `as`))
-        return self
-    }
-    
-    public func selectField(_ jsonObject: FQJSON, as asKey: String?) -> Self {
-        var string = jsonObject.query
-        if let asKey = asKey {
-            string.append(" as \"\(asKey)\"")
-        }
-        selectFields.append(string)
+        select.field(as: `as`, json)
         return self
     }
     
@@ -147,13 +138,8 @@ public class FluentQuery: FQPart {
     
     public var query: String {
         var result = "SELECT"
-        for (index, field) in selectFields.enumerated() {
-            if index > 0 {
-                result.append(",")
-            }
-            result.append(FluentQueryNextLine)
-            result.append(field.query)
-        }
+        result.append(FluentQueryNextLine)
+        result.append(select.query)
         if froms.count > 0 {
             result.append(FluentQueryNextLine)
             result.append("FROM")

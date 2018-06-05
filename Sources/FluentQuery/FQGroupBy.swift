@@ -6,34 +6,19 @@ public class FQGroupBy: FQPart {
     
     public init () {}
     
-    public init<M, V>(_ kp: KeyPath<M, V>) where M: Model {
+    public init<T>(_ kp: T) where T: FQUniversalKeyPath {
         add(kp)
     }
     
-    public init<M, V>(_ alias: AliasedKeyPath<M, V>) where M: Model {
-        add(alias)
-    }
-    
     @discardableResult
-    public func add<M, V>(_ kp: KeyPath<M, V>) -> Self where M: Model {
-        parts.append(FluentQuery.formattedPath(M.FQType.self, kp))
+    public func add<T>(_ kp: T) -> Self where T: FQUniversalKeyPath {
+        parts.append(kp.queryValue)
         return self
     }
     
     @discardableResult
-    public func add<M, V>(_ alias: AliasedKeyPath<M, V>) -> Self {
-        parts.append(alias.query)
-        return self
-    }
-    
-    @discardableResult
-    public func and<M, V>(_ kp: KeyPath<M, V>) -> Self where M: Model {
+    public func and<T>(_ kp: T) -> Self where T: FQUniversalKeyPath {
         return add(kp)
-    }
-    
-    @discardableResult
-    public func and<M, V>(_ alias: AliasedKeyPath<M, V>) -> Self where M: Model {
-        return add(alias)
     }
     
     public var query: String {
