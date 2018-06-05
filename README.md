@@ -39,7 +39,7 @@ Edit your `Package.swift`
 
 ```swift
 //add this repo to dependencies
-.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.1.1")
+.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.2.0")
 //and don't forget about targets
 //"FluentQuery"
 ```
