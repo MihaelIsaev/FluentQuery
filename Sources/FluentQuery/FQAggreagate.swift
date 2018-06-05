@@ -64,7 +64,7 @@ public class FQAggregate {
     }
     
     //MARK: Mirror KeyPath based functions
-    public enum FuncOptionKP<UKP>: FQAggregateFuncOption, FQAggregateFuncOptionKP where UKP: FQUniversalKeyPath {
+    public enum FunctionWithKeyPath<UKP>: FQAggregateFuncOption, FQAggregateFuncOptionKP where UKP: FQUniversalKeyPath {
         public typealias Root = UKP
         
         case count(UKP)
@@ -105,7 +105,7 @@ public class FQAggregate {
             return mirror.value
         }
         
-        public static func ==(lhs: FuncOptionKP, rhs: FuncOptionKP) -> Bool {
+        public static func ==(lhs: FunctionWithKeyPath, rhs: FunctionWithKeyPath) -> Bool {
             return lhs.func == rhs.func
         }
     }
