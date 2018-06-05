@@ -30,31 +30,6 @@ public class FluentQuery: FQPart {
     
     public init() {}
     
-    public func from(_ db: String, as asKey: String) -> Self {
-        froms.append("\"\(db)\" as \"\(asKey)\"")
-        return self
-    }
-    
-    public func from(_ db: String) -> Self {
-        froms.append("\"\(db)\"")
-        return self
-    }
-    
-    public func from<T>(_ db: T.Type) -> Self where T: Model {
-        froms.append(T.FQType.query)
-        return self
-    }
-    
-    public func from<T>(_ db: FQAlias<T>) -> Self {
-        froms.append(db.query)
-        return self
-    }
-    
-    public func from(raw: String) -> Self {
-        froms.append(raw)
-        return self
-    }
-    
     public func select(_ str: String) -> Self {
         selectFields.append(str)
         return self
@@ -96,6 +71,31 @@ public class FluentQuery: FQPart {
             string.append(" as \"\(asKey)\"")
         }
         selectFields.append(string)
+        return self
+    }
+    
+    public func from(_ db: String, as asKey: String) -> Self {
+        froms.append("\"\(db)\" as \"\(asKey)\"")
+        return self
+    }
+    
+    public func from(_ db: String) -> Self {
+        froms.append("\"\(db)\"")
+        return self
+    }
+    
+    public func from<T>(_ db: T.Type) -> Self where T: Model {
+        froms.append(T.FQType.query)
+        return self
+    }
+    
+    public func from<T>(_ db: FQAlias<T>) -> Self {
+        froms.append(db.query)
+        return self
+    }
+    
+    public func from(raw: String) -> Self {
+        froms.append(raw)
         return self
     }
     
