@@ -10,7 +10,7 @@ import Fluent
 
 public class FQSelect: FQPart {
     
-    public var fields: [FQPart] = []
+    var fields: [FQPart] = []
     
     public init() {}
     
