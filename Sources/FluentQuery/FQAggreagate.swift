@@ -24,7 +24,7 @@ public class FQAggregate {
             let description: String
             switch self {
             case .count:
-                description = "COUNT(\(FQAggregate.valueKey)"
+                description = "COUNT(\(FQAggregate.valueKey))"
             case .sum:
                 description = "SUM(\(FQAggregate.valueKey))"
             case .average:
