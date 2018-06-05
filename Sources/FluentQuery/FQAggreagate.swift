@@ -6,6 +6,8 @@ protocol FQAggregateFuncOption : CustomStringConvertible, Equatable {
 }
 
 public class FQAggregate {
+    static let valueKey = "%"
+    
     //MARK: Original functions
     public enum Functions: FQAggregateFuncOption {
         case count(String) //kp
@@ -18,22 +20,21 @@ public class FQAggregate {
             let description: String
             switch self {
             case .count:
-                description = "COUNT(%)"
+                description = "COUNT(\(FQAggregate.valueKey)"
             case .sum:
-                description = "SUM(%)"
+                description = "SUM(\(FQAggregate.valueKey))"
             case .average:
-                description = "AVG(%)"
+                description = "AVG(\(FQAggregate.valueKey))"
             case .min:
-                description = "MIN(%)"
+                description = "MIN(\(FQAggregate.valueKey))"
             case .max:
-                description = "MAX(%)"
+                description = "MAX(\(FQAggregate.valueKey))"
             }
             return description
         }
         
         var `func`: String {
-            let valueKey = "%"
-            return description.replacingOccurrences(of: valueKey, with: "\(value)")
+            return description.replacingOccurrences(of: FQAggregate.valueKey, with: "\(value)")
         }
         
         var value: Any {
