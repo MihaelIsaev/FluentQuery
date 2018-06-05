@@ -344,7 +344,7 @@ About `FQWhere` you already read above, but as having calls after data aggregati
 
 | Method  | SQL equivalent |
 | ------- | -------------- |
-| .ooffset(0) | OFFSET 0 |
+| .offset(0) | OFFSET 0 |
 
 #### Limit
 
