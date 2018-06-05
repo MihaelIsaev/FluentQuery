@@ -257,6 +257,8 @@ So to add what you want to select call these methods one by one
 | Method  | SQL equivalent |
 | ------- | -------------- |
 | .select("*") | * |
+| .select(all: Car.self) | "Cars".* |
+| .select(all: someAlias) | "some_alias".* |
 | .select(\Car.id) | "Car".id |
 | .select(someAlias.k(\.id)) | "some_alias".id |
 | .select(distinct: \Car.id) | DISTINCT "Car".id |
@@ -264,7 +266,7 @@ So to add what you want to select call these methods one by one
 | .select(count: \Car.id) | DISTINCT "Car".id |
 | .select(count: someAlias.k(\.id)) | DISTINCT "some_alias".id |
 
-_Yeah-yeah in the future I have to add all available aggregate functions, and also json functions._
+_Yeah-yeah in the future I have to add all available aggregate functions(almost done), and also json functions._
 
 _BTW, read about aliases below_
 
@@ -296,7 +298,7 @@ _About `FQWhere` please read below_
 
 `.where(FQWhere)`
 
-`FQWhere(predicate).and(predicate).groupStart().or(predicate).or(predicate).groupEnd()`
+`FQWhere(predicate).and(predicate).or(predicate).and(FQWhere).or(FQWhere)`
 
 ##### What `predicate` is?
 It may be `KeyPath operator KeyPath` or `KeyPath operator Value`
@@ -314,6 +316,20 @@ FQWhere(someAlias.k(\.deletedAt) == nil)
 FQWhere(someAlias.k(\.id) == 12).and(\Car.color ~~ ["blue", "red", "white"])
 FQWhere(\Car.year == "2018").and(\Brand.value !~ ["Chevrolet", "Toyota"])
 FQWhere(\Car.year != "2005").and(someAlias.k(\.engineCapacity) > 1.6)
+```
+
+##### Where grouping example
+
+if you need to group predicates like
+
+```sql
+"Cars"."engineCapacity" > 1.6 AND ("Brands".value LIKE '%YO%' OR "Brands".value LIKE '%ET')
+```
+
+then do it like this
+
+```swift
+FQWhere(\Car.engineCapacity > 1.6).and(FQWhere(\Brand.value ~~ "YO").or(\Brand.value ~= "ET"))
 ```
 
 #### Having
