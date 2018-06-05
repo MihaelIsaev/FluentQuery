@@ -423,3 +423,9 @@ aliasModel.k(\.value)
 aliasEngineType.k(\.id)
 aliasEngineType.k(\.value)
 ```
+
+## Known Issues
+
+Looks like predicates doesn't work properly with `Date` properties cause I should format date properly in `FQPredicate` class
+
+`FQSelect` methods should support `FQAggregate`
