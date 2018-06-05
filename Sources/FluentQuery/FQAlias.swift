@@ -34,3 +34,23 @@ public class FQAlias<M>: FQPart where M: Model {
         return AliasedKeyPath(alias, kp)
     }
 }
+
+public protocol FQUniversalKeyPath {
+    var queryValue: String { get }
+}
+
+extension KeyPath: FQUniversalKeyPath where Root: Model {
+    public var queryValue: String {
+        return FQGetKeyPath(self)
+    }
+}
+
+extension AliasedKeyPath: FQUniversalKeyPath {
+    public var queryValue: String {
+        return FQGetKeyPath(self)
+    }
+}
+
+public protocol FQUniversalModel {
+    var queryValue: String { get }
+}
