@@ -248,3 +248,11 @@ let FluentQueryNextLine = """
 
 
 """
+
+public func FQGetKeyPath<T, V>(_ kp: KeyPath<T, V>) -> String where T: Model {
+    return FluentQuery.formattedPath(T.FQType.self, kp)
+}
+
+public func FQGetKeyPath<T, V>(_ alias: AliasedKeyPath<T, V>) -> String where T: Model {
+    return alias.query
+}
