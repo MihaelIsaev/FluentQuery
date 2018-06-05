@@ -1,4 +1,4 @@
-[![Vapor](https://user-images.githubusercontent.com/1272610/40946272-af6396fa-686d-11e8-82af-192850fe3216.png)](http://vapor.team)
+[![Mihael Isaev](https://user-images.githubusercontent.com/1272610/40946272-af6396fa-686d-11e8-82af-192850fe3216.png)](http://mihaelisaev.com)
 
 <p align="center">
     <a href="https://discord.gg/vapor">
@@ -39,7 +39,7 @@ Edit your `Package.swift`
 
 ```swift
 //add this repo to dependencies
-.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.1.0")
+.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.1.1")
 //and don't forget about targets
 //"FluentQuery"
 ```
