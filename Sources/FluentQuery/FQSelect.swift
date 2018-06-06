@@ -58,6 +58,18 @@ public class FQSelect: FQPart {
         return self
     }
     
+    @discardableResult
+    public func `func`<M>(_ func: FQJSON.FunctionWithModelAlias<M>, as: String? = nil) -> Self where M: Model {
+        _append(`func`.func.roundBracketted, `as`)
+        return self
+    }
+    
+    @discardableResult
+    public func `func`<M>(_ func: FQJSON.FunctionWithModel<M>, as: String? = nil) -> Self where M: Model {
+        _append(`func`.func.roundBracketted, `as`)
+        return self
+    }
+    
     private func _append(_ field: String, _ as: String? = nil) {
         var string = "\(field)"
         if let `as` = `as` {

@@ -106,7 +106,7 @@ public class FQPredicate<T>: FQPart, FQPredicateGenericType  where T: FQUniversa
                     }
                 }
             }
-            return v.singleQuotted
+            return String.singleQuotted(v)
         case is UUID: if let v = v as? UUID { return v.uuidString.singleQuotted } else { fallthrough }
         case is Bool: if let v = v as? Bool { return "\(v ? 1 : 0)" } else { fallthrough }
         case is Int: fallthrough

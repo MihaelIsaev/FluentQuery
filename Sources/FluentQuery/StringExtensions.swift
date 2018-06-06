@@ -19,4 +19,16 @@ extension String {
     var roundBracketted: String {
         return "(\(self))"
     }
+    
+    static func singleQuotted(_ v: Any) -> String {
+        return "\(v)".singleQuotted
+    }
+    
+    static func doubleQuotted(_ v: Any) -> String {
+        return "\(v)".doubleQuotted
+    }
+    
+    static func roundBracketted(_ v: Any) -> String {
+        return "\(v)".roundBracketted
+    }
 }

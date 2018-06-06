@@ -120,11 +120,11 @@ public class FQAggregate {
         
         var mirror: Functions {
             switch self {
-            case .count: return .count("\(value.roundBracketted)")
-            case .sum: return .sum("\(value.roundBracketted)")
-            case .average: return .average("\(value.roundBracketted)")
-            case .min: return .min("\(value.roundBracketted)")
-            case .max: return .max("\(value.roundBracketted)")
+            case .count: return .count(String.roundBracketted(value))
+            case .sum: return .sum(String.roundBracketted(value))
+            case .average: return .average(String.roundBracketted(value))
+            case .min: return .min(String.roundBracketted(value))
+            case .max: return .max(String.roundBracketted(value))
             }
         }
         
