@@ -76,6 +76,12 @@ I faced with that problem and I started developing this lib to write raw SQL que
 
 And let's take a look what we have :)
 
+### Known Issues
+
+Predicates doesn't work yet with `Date` properties cause dates isn't formatted properly in `FQPredicate` class
+
+`FQSelect` methods should support `FQAggregate`
+
 ### How it works
 
 First of all you need to import the lib
@@ -445,9 +451,3 @@ aliasModel.k(\.value)
 aliasEngineType.k(\.id)
 aliasEngineType.k(\.value)
 ```
-
-## Known Issues
-
-Looks like predicates doesn't work properly with `Date` properties cause I should format date properly in `FQPredicate` class
-
-`FQSelect` methods should support `FQAggregate`
