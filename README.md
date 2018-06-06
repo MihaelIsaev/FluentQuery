@@ -17,7 +17,30 @@
 
 <br>
 
-# FluentQuery
+# Quick Intro
+
+```swift
+struct PublicUser: Codable {
+    var name: String
+    var petName: String
+    var petType: String
+    var petToysQuantity: Int
+}
+try FluentQuery()
+    .select(all: User.self)
+    .select(\Pet.name, as: "petName")
+    .select(\PetType.name, as: "petType")
+    .select(count: \PetToy.id, as: "")
+    .from(User.self)
+    .join(.left, Pet.self, where: FQWhere(\Pet.id == \User.idPet))
+    .join(.left, PetType.self, where: FQWhere(\PetType.id == \Pet.idType))
+    .join(.left, PetToy.self, where: FQWhere(\PetToy.idPet == \Pet.id))
+    .groupBy(FQGroupBy(\User.id).and(\Pet.id).and(\PetType.id).and(\PetToy.id))
+    .execute(on: conn)
+    .decode(PublicUser.self) // -> Future<[PublicUser]> 🔥🔥🔥
+```
+
+# Intro
 
 It's a swift lib that gives ability to build complex raw SQL-queries in a more easy way using KeyPaths.
 
@@ -43,7 +66,7 @@ Edit your `Package.swift`
 //and don't forget about targets
 //"FluentQuery"
 ```
-### Intro
+### One more little intro
 
 I love to write raw SQL queries because it gives ability to flexibly use all the power of database engine.
 
@@ -184,31 +207,32 @@ In the future when Fluent will make public function for easy decoding for whole 
 
 Hahah, but that's cool right? 😃
 
-BTW, this is a raw SQL equivalent
+<details>
+    <summary>BTW, this is a raw SQL equivalent</summary>
+        
+    SELECT
+    DISTINCT c.id,
+    jsonb_build_object(
+      'id', c.id,
+      'year', c.year,
+      'color', c.color,
+      'engineCapacity', c."engineCapacity",
+      'brand', (SELECT row_to_json(brand)),
+      'model', (SELECT row_to_json("Models")),
+      'bodyType', (SELECT row_to_json("BodyTypes")),
+      'engineType', (SELECT row_to_json("EngineTypes")),
+      'gearboxType', (SELECT row_to_json("GearboxTypes"))
+    ) as "car"
+    FROM "Cars" as c
+    LEFT JOIN "Brands" as brand ON c."idBrand" = brand.id
+    LEFT JOIN "Models" as model ON c."idModel" = model.id
+    LEFT JOIN "BodyTypes" as bt ON c."idBodyType" = bt.id
+    LEFT JOIN "EngineTypes" as et ON c."idEngineType" = et.id
+    LEFT JOIN "GearboxTypes" as gt ON c."idGearboxType" = gt.id
+    GROUP BY c.id, brand.id, model.id, bt.id, et.id, gt.id
+    ORDER BY brand.value ASC, model.value ASC
+</details>
 
-```sql
-SELECT
-DISTINCT c.id,
-jsonb_build_object(
-  'id', c.id,
-  'year', c.year,
-  'color', c.color,
-  'engineCapacity', c."engineCapacity",
-  'brand', (SELECT row_to_json(brand)),
-  'model', (SELECT row_to_json("Models")),
-  'bodyType', (SELECT row_to_json("BodyTypes")),
-  'engineType', (SELECT row_to_json("EngineTypes")),
-  'gearboxType', (SELECT row_to_json("GearboxTypes"))
-) as "car"
-FROM "Cars" as c
-LEFT JOIN "Brands" as brand ON c."idBrand" = brand.id
-LEFT JOIN "Models" as model ON c."idModel" = model.id
-LEFT JOIN "BodyTypes" as bt ON c."idBodyType" = bt.id
-LEFT JOIN "EngineTypes" as et ON c."idEngineType" = et.id
-LEFT JOIN "GearboxTypes" as gt ON c."idGearboxType" = gt.id
-GROUP BY c.id, brand.id, model.id, bt.id, et.id, gt.id
-ORDER BY brand.value ASC, model.value ASC
-```
 
 So why do you need to use this lib for your complex queries?
 
@@ -223,29 +247,9 @@ To tell you the truth `Fluent` can do queries like this and it will look better 
 
 But if to speak about real complex queries when you need to join on joined values, count something on the fly and so on - here this lib can be super useful! 🔥
 
-## Which operators available
+### Methods
 
-### Cheatsheet
-| Operator  | SQL equivalent |
-| -- | --- |
-| == | == / IS |
-| != | != / IS NOT|
-| > | > |
-| < | < |
-| >= | >= |
-| <= | <= |
-| ~~ | IN () |
-| !~ | NOT IN () |
-| ~= | LIKE '%str' |
-| ~~ | LIKE '%str%' |
-| =~ | LIKE 'str%' |
-| !~= | NOT LIKE '%str' |
-| !~~ | NOT LIKE '%str%' |
-| !=~ | NOT LIKE 'str%' |
-
-### Parts
-
-The list of the methods which `FluentQuery` provide
+The list of the methods which `FluentQuery` provide with
 
 #### Select
 These methods will add fields which will be used between `SELECT` and `FROM`
@@ -331,6 +335,24 @@ then do it like this
 ```swift
 FQWhere(\Car.engineCapacity > 1.6).and(FQWhere(\Brand.value ~~ "YO").or(\Brand.value ~= "ET"))
 ```
+
+##### Cheatsheet
+| Operator  | SQL equivalent |
+| -- | --- |
+| == | == / IS |
+| != | != / IS NOT|
+| > | > |
+| < | < |
+| >= | >= |
+| <= | <= |
+| ~~ | IN () |
+| !~ | NOT IN () |
+| ~= | LIKE '%str' |
+| ~~ | LIKE '%str%' |
+| =~ | LIKE 'str%' |
+| !~= | NOT LIKE '%str' |
+| !~~ | NOT LIKE '%str%' |
+| !=~ | NOT LIKE 'str%' |
 
 #### Having
 
