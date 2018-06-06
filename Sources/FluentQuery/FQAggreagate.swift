@@ -24,15 +24,15 @@ public class FQAggregate {
             let description: String
             switch self {
             case .count:
-                description = "COUNT(\(FQAggregate.valueKey))"
+                description = "COUNT\(FQAggregate.valueKey.roundBracketted)"
             case .sum:
-                description = "SUM(\(FQAggregate.valueKey))"
+                description = "SUM\(FQAggregate.valueKey.roundBracketted)"
             case .average:
-                description = "AVG(\(FQAggregate.valueKey))"
+                description = "AVG\(FQAggregate.valueKey.roundBracketted)"
             case .min:
-                description = "MIN(\(FQAggregate.valueKey))"
+                description = "MIN\(FQAggregate.valueKey.roundBracketted)"
             case .max:
-                description = "MAX(\(FQAggregate.valueKey))"
+                description = "MAX\(FQAggregate.valueKey.roundBracketted)"
             }
             return description
         }
@@ -120,11 +120,11 @@ public class FQAggregate {
         
         var mirror: Functions {
             switch self {
-            case .count: return .count("(\(value))")
-            case .sum: return .sum("(\(value))")
-            case .average: return .average("(\(value))")
-            case .min: return .min("(\(value))")
-            case .max: return .max("(\(value))")
+            case .count: return .count("\(value.roundBracketted)")
+            case .sum: return .sum("\(value.roundBracketted)")
+            case .average: return .average("\(value.roundBracketted)")
+            case .min: return .min("\(value.roundBracketted)")
+            case .max: return .max("\(value.roundBracketted)")
             }
         }
         

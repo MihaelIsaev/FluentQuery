@@ -9,7 +9,7 @@ public class FQTable<T>: FQPart where T: Model {
         return "_\(name.lowercased())_"
     }
     public static var query: String {
-        return "\"\(FQTable.name)\" as \"\(FQTable.alias)\""
+        return "\(FQTable.name.doubleQuotted) as \(FQTable.alias.doubleQuotted)"
     }
     
     //MARK: SQLQueryPart

@@ -23,13 +23,13 @@ public class FQSelect: FQPart {
     
     @discardableResult
     public func all<T>(_ table: T.Type) -> Self where T: Model {
-        fields.append("\"\(T.FQType.alias)\".*")
+        fields.append("\(T.FQType.alias.doubleQuotted).*")
         return self
     }
     
     @discardableResult
     public func all<T>(_ alias: FQAlias<T>) -> Self where T: Model {
-        fields.append("\"\(alias.alias)\".*")
+        fields.append("\(alias.alias.doubleQuotted).*")
         return self
     }
     
@@ -61,7 +61,7 @@ public class FQSelect: FQPart {
     private func _append(_ field: String, _ as: String? = nil) {
         var string = "\(field)"
         if let `as` = `as` {
-            string.append(" as \"\(`as`)\"")
+            string.append(" as \(`as`.doubleQuotted)")
         }
         fields.append(string)
     }

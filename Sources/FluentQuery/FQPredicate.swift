@@ -106,8 +106,8 @@ public class FQPredicate<T>: FQPart, FQPredicateGenericType  where T: FQUniversa
                     }
                 }
             }
-            return "'\(v)'"
-        case is UUID: if let v = v as? UUID { return "'\(v.uuidString)'" } else { fallthrough }
+            return v.singleQuotted
+        case is UUID: if let v = v as? UUID { return v.uuidString.singleQuotted } else { fallthrough }
         case is Bool: if let v = v as? Bool { return "\(v ? 1 : 0)" } else { fallthrough }
         case is Int: fallthrough
         case is Int8: fallthrough
@@ -135,11 +135,11 @@ public class FQPredicate<T>: FQPart, FQPredicateGenericType  where T: FQUniversa
         case .simpleOptional(let v):
             result.append(formatValue(v))
         case .array(let v):
-            result.append("(\(v.map { "\(formatValue($0))" }.joined(separator: ",")))")
+            result.append( v.map { "\(formatValue($0))" }.joined(separator: ",").roundBracketted )
         case .arrayOfOptionals(let v):
-            result.append("(\(v.map { "\(formatValue($0))" }.joined(separator: ",")))")
+            result.append( v.map { "\(formatValue($0))" }.joined(separator: ",").roundBracketted )
         case .arrayOfAny(let v):
-            result.append("(\(v.map { "\(formatValue($0))" }.joined(separator: ",")))")
+            result.append( v.map { "\(formatValue($0))" }.joined(separator: ",").roundBracketted )
         case .string(let v):
             result.append(formatValue(v))
         }
@@ -167,7 +167,7 @@ public func == <M, K>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: K) -> FQPred
     return FQPredicate(kp: lhs, operation: .equal, value: .simpleAny(rhs))
 }
 public func == <M>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: FluentQuery) -> FQPredicateGenericType where M: FQUniversalKeyPath {
-    return FQPredicate(kp: lhs, operation: .equal, value: .string("(\(rhs.query))"))
+    return FQPredicate(kp: lhs, operation: .equal, value: .string(rhs.query.roundBracketted))
 }
 public func == <M, T>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: T) -> FQPredicateGenericType where M: FQUniversalKeyPath, T: FQUniversalKeyPath {
     return FQJoinPredicate(lhs: lhs, operation: .equal, rhs: rhs)
@@ -189,7 +189,7 @@ public func != <M, K>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: K) -> FQPred
     return FQPredicate(kp: lhs, operation: .notEqual, value: .simpleAny(rhs))
 }
 public func != <M>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: FluentQuery) -> FQPredicateGenericType where M: FQUniversalKeyPath {
-    return FQPredicate(kp: lhs, operation: .notEqual, value: .string("(\(rhs.query))"))
+    return FQPredicate(kp: lhs, operation: .notEqual, value: .string(rhs.query.roundBracketted))
 }
 public func != <M, T>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: T) -> FQPredicateGenericType where M: FQUniversalKeyPath, T: FQUniversalKeyPath {
     return FQJoinPredicate(lhs: lhs, operation: .notEqual, rhs: rhs)
@@ -207,7 +207,7 @@ public func > <M, K>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: K) -> FQPredi
     return FQPredicate(kp: lhs, operation: .greaterThan, value: .simpleAny(rhs))
 }
 public func > <M>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: FluentQuery) -> FQPredicateGenericType where M: FQUniversalKeyPath {
-    return FQPredicate(kp: lhs, operation: .greaterThan, value: .string("(\(rhs.query))"))
+    return FQPredicate(kp: lhs, operation: .greaterThan, value: .string(rhs.query.roundBracketted))
 }
 public func > <M, T>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: T) -> FQPredicateGenericType where M: FQUniversalKeyPath, T: FQUniversalKeyPath {
     return FQJoinPredicate(lhs: lhs, operation: .greaterThan, rhs: rhs)
@@ -225,7 +225,7 @@ public func < <M, K>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: K) -> FQPredi
     return FQPredicate(kp: lhs, operation: .lessThan, value: .simpleAny(rhs))
 }
 public func < <M>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: FluentQuery) -> FQPredicateGenericType where M: FQUniversalKeyPath {
-    return FQPredicate(kp: lhs, operation: .lessThan, value: .string("(\(rhs.query))"))
+    return FQPredicate(kp: lhs, operation: .lessThan, value: .string(rhs.query.roundBracketted))
 }
 public func < <M, T>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: T) -> FQPredicateGenericType where M: FQUniversalKeyPath, T: FQUniversalKeyPath {
     return FQJoinPredicate(lhs: lhs, operation: .lessThan, rhs: rhs)
@@ -243,7 +243,7 @@ public func >= <M, K>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: K) -> FQPred
     return FQPredicate(kp: lhs, operation: .greaterThanOrEqual, value: .simpleAny(rhs))
 }
 public func >= <M>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: FluentQuery) -> FQPredicateGenericType where M: FQUniversalKeyPath {
-    return FQPredicate(kp: lhs, operation: .greaterThanOrEqual, value: .string("(\(rhs.query))"))
+    return FQPredicate(kp: lhs, operation: .greaterThanOrEqual, value: .string(rhs.query.roundBracketted))
 }
 public func >= <M, T>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: T) -> FQPredicateGenericType where M: FQUniversalKeyPath, T: FQUniversalKeyPath {
     return FQJoinPredicate(lhs: lhs, operation: .greaterThanOrEqual, rhs: rhs)
@@ -262,7 +262,7 @@ public func <= <M, K>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: K) -> FQPred
     return FQPredicate(kp: lhs, operation: .lessThanOrEqual, value: .simpleAny(rhs))
 }
 public func <= <M>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: FluentQuery) -> FQPredicateGenericType where M: FQUniversalKeyPath {
-    return FQPredicate(kp: lhs, operation: .lessThanOrEqual, value: .string("(\(rhs.query))"))
+    return FQPredicate(kp: lhs, operation: .lessThanOrEqual, value: .string(rhs.query.roundBracketted))
 }
 public func <= <M, T>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: T) -> FQPredicateGenericType where M: FQUniversalKeyPath, T: FQUniversalKeyPath {
     return FQJoinPredicate(lhs: lhs, operation: .lessThanOrEqual, rhs: rhs)
@@ -277,14 +277,14 @@ public func ~~ <T>(lhs: T, rhs: [T.AType]) -> FQPredicateGenericType where T: FQ
 }
 // IN SUBQUERY
 public func ~~ <T>(lhs: T, rhs: FluentQuery) -> FQPredicateGenericType where T: FQUniversalKeyPath {
-    return FQPredicate(kp: lhs, operation: .in, value: .string("(\(rhs.query))"))
+    return FQPredicate(kp: lhs, operation: .in, value: .string(rhs.query.roundBracketted))
 }
 // IN aggregate function
 public func ~~ <M, K>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: [K]) -> FQPredicateGenericType where M: FQUniversalKeyPath, K: Numeric {
     return FQPredicate(kp: lhs, operation: .in, value: .arrayOfAny(rhs))
 }
 public func ~~ <M>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: FluentQuery) -> FQPredicateGenericType where M: FQUniversalKeyPath {
-    return FQPredicate(kp: lhs, operation: .in, value: .string("(\(rhs.query))"))
+    return FQPredicate(kp: lhs, operation: .in, value: .string(rhs.query.roundBracketted))
 }
 
 // NOT IN
@@ -296,14 +296,14 @@ public func !~ <T>(lhs: T, rhs: [T.AType]) -> FQPredicateGenericType where T: FQ
 }
 // NOT IN SUBQUERY
 public func !~ <T>(lhs: T, rhs: FluentQuery) -> FQPredicateGenericType where T: FQUniversalKeyPath {
-    return FQPredicate(kp: lhs, operation: .notIn, value: .string("(\(rhs.query))"))
+    return FQPredicate(kp: lhs, operation: .notIn, value: .string(rhs.query.roundBracketted))
 }
 // NOT IN aggregate function
 public func !~ <M, K>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: [K]) -> FQPredicateGenericType where M: FQUniversalKeyPath, K: Numeric {
     return FQPredicate(kp: lhs, operation: .notIn, value: .arrayOfAny(rhs))
 }
 public func !~ <M>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: FluentQuery) -> FQPredicateGenericType where M: FQUniversalKeyPath {
-    return FQPredicate(kp: lhs, operation: .notIn, value: .string("(\(rhs.query))"))
+    return FQPredicate(kp: lhs, operation: .notIn, value: .string(rhs.query.roundBracketted))
 }
 
 // LIKE

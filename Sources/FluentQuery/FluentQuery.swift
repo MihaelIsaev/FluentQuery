@@ -68,12 +68,12 @@ public class FluentQuery: FQPart {
     }
     
     public func from(_ db: String, as asKey: String) -> Self {
-        froms.append("\"\(db)\" as \"\(asKey)\"")
+        froms.append("\(db.doubleQuotted) as \(asKey.doubleQuotted)")
         return self
     }
     
     public func from(_ db: String) -> Self {
-        froms.append("\"\(db)\"")
+        froms.append("\(db.doubleQuotted)")
         return self
     }
     
@@ -219,13 +219,13 @@ extension FluentQuery {
         let values: [String] = T.describeKeyPath(kp)
         for (index, p) in values.enumerated() {
             if index == 0 {
-                formattedPath.append("\"\(p)\"")
+                formattedPath.append("\(p.doubleQuotted)")
             } else {
                 formattedPath.append("->")
-                formattedPath.append("'\(p)'")
+                formattedPath.append("\(p.singleQuotted)")
             }
         }
-        return "\"\(table)\".\(formattedPath)"
+        return "\(table.doubleQuotted).\(formattedPath)"
     }
 }
 

@@ -12,7 +12,7 @@ public class FQJSON: FQPart {
         var query: String {
             var result = object.query
             if let asKey = asKey {
-                result.append(" as \"\(asKey)\"")
+                result.append(" as \(asKey.doubleQuotted)")
             }
             return result
         }
@@ -32,19 +32,19 @@ public class FQJSON: FQPart {
     
     @discardableResult
     public func field(_ key: String, raw: String) -> Self {
-        fields.append("'\(key)', (\(raw))")
+        fields.append("\(key.singleQuotted), \(raw.roundBracketted)")
         return self
     }
     
     @discardableResult
     public func field(_ key: String, _ value: String) -> Self {
-        fields.append("'\(key)', \"\(value)\"")
+        fields.append("\(key.singleQuotted), \(value.doubleQuotted)")
         return self
     }
     
     @discardableResult
     public func field(_ key: String, _ value: FQPart) -> Self {
-        fields.append("'\(key)', \(value.query)")
+        fields.append("\(key.singleQuotted), \(value.query)")
         return self
     }
     
@@ -55,7 +55,7 @@ public class FQJSON: FQPart {
     
     @discardableResult
     public func field<T, V>(_ key: String, _ aliased: AliasedKeyPath<T, V>) -> Self where T: Model {
-        fields.append("'\(key)', \(FluentQuery.formattedPath(aliased.query, aliased.kp))")
+        fields.append("\(key.singleQuotted), \(FluentQuery.formattedPath(aliased.query, aliased.kp))")
         return self
     }
     
@@ -95,7 +95,7 @@ public class FQJSON: FQPart {
     
     @discardableResult
     public func field<T, V>(_ key: String, _ table: FQTable<T>.Type, _ kp: KeyPath<T, V>) -> Self where T: Model {
-        fields.append("'\(key)', \(FluentQuery.formattedPath(table, kp))")
+        fields.append("\(key.singleQuotted), \(FluentQuery.formattedPath(table, kp))")
         return self
     }
     
@@ -263,7 +263,7 @@ extension FQJSON {
         
         var mirror: Functions {
             switch self {
-            case .rowToJson(let v): return .rowToJson("\"\(v.alias)\"")
+            case .rowToJson(let v): return .rowToJson("\(v.alias.doubleQuotted)")
             case .none: return .empty()
             }
         }
@@ -292,7 +292,7 @@ extension FQJSON {
         
         var mirror: Functions {
             switch self {
-            case .rowToJson: return .rowToJson("\"\(T.FQType.alias)\"")
+            case .rowToJson: return .rowToJson("\(T.FQType.alias.doubleQuotted)")
             case .none: return .empty()
             }
         }
