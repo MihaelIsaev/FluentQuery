@@ -240,7 +240,7 @@ Hahah, but that's cool right? 😃
 </details>
 
 
-So why do you need to use this lib for your complex queries?
+### So why do you need to use this lib for your complex queries?
 
 #### The reason #1 is KeyPaths!
 If you will change your models in the future you'll have to remember where you used links to this model properties and rewrite them manually and if you forgot one you will get headache in production. But with KeyPaths you will be able to compile your project only while all links to the models properties are up to date. Even better, you will be able to use `refactor` functionality of Xcode! 😄
