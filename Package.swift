@@ -11,10 +11,10 @@ let package = Package(
     ],
     dependencies: [
         // Swift ORM framework (queries, models, and relations) for building NoSQL and SQL database integrations.
-        .package(url: "https://github.com/vapor/fluent.git", from: "3.0.0-rc")
+        .package(url: "https://github.com/vapor/fluent-postgresql.git", from: "1.0.0-rc.2.1.1"),
     ],
     targets: [
-        .target(name: "FluentQuery", dependencies: ["Fluent"]),
-        .testTarget(name: "FluentQueryTests", dependencies: ["FluentQuery", "Fluent"]),
+        .target(name: "FluentQuery", dependencies: ["FluentPostgreSQL"]),
+        .testTarget(name: "FluentQueryTests", dependencies: ["FluentQuery", "FluentPostgreSQL"]),
     ]
 )
