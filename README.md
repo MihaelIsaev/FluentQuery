@@ -1,9 +1,6 @@
 [![Mihael Isaev](https://user-images.githubusercontent.com/1272610/40946272-af6396fa-686d-11e8-82af-192850fe3216.png)](http://mihaelisaev.com)
 
 <p align="center">
-    <a href="https://discord.gg/vapor">
-        <img src="https://img.shields.io/discord/431917998102675485.svg" alt="Vapor in Discord">
-    </a>
     <a href="LICENSE">
         <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg" alt="MIT License">
     </a>
@@ -52,7 +49,7 @@ Now it supports: query with most common predicates, building json objects in sel
 
 Note: the project is in active development state and it may cause huge syntax changes before v1.0.0
 
-If you have great ideas of how to improve this package write me (@iMike) in Vapor's discord chat or just send pull request.
+If you have great ideas of how to improve this package write me (@iMike) in [Vapor's discord chat](http://vapor.team) or just send pull request.
 
 Hope it'll be useful for someone :)
 
