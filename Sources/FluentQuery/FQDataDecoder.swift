@@ -6,17 +6,9 @@ extension EventLoopFuture where T == [[PostgreSQL.PostgreSQLColumn: PostgreSQLDa
     public func decode<T>(_ to: T.Type) throws -> EventLoopFuture<[T]> where T: Decodable {
         return map { return try $0.decode(T.self) }
     }
-    
-    public func decode<T>(_ to: [T].Type) throws -> EventLoopFuture<[T]> where T: Decodable {
-        return map { return try $0.decode(T.self) }
-    }
 }
 
 extension Array where Element == [PostgreSQL.PostgreSQLColumn: PostgreSQL.PostgreSQLData] {
-    public func decode<T>(_ to: [T].Type) throws -> [T] where T: Decodable {
-        return try map { try $0.decode(T.self) }
-    }
-    
     public func decode<T>(_ to: T.Type) throws -> [T] where T: Decodable {
         return try map { try $0.decode(T.self) }
     }
