@@ -17,16 +17,8 @@ public class FQJSON: FQPart {
             return result
         }
     }
-    public enum Mode: String {
-        case normal = "json"
-        case binary = "jsonb"
-    }
     
-    public var mode: Mode
-    
-    public init(_ mode: Mode) {
-        self.mode = mode
-    }
+    public init() {}
     
     var fields: [FQPart] = []
     
@@ -100,7 +92,7 @@ public class FQJSON: FQPart {
     }
     
     public var query: String {
-        var result = "\(mode.rawValue)_build_object"
+        var result = "jsonb_build_object"
         result.append("(")
         for (index, field) in fields.enumerated() {
             if index > 0 {
@@ -132,7 +124,7 @@ extension FQJSON {
             let description: String
             switch self {
             case .rowToJson:
-                description = "SELECT row_to_json(%)"
+                description = "SELECT to_jsonb(%)"
             case .extractEpochFromTime:
                 description = "extract(epoch from %)"
             case .count:
