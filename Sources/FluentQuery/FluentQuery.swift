@@ -32,25 +32,31 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     
     public init() {}
     
-    public func select(_ select: FQSelect) {
+    @discardableResult
+    public func select(_ select: FQSelect) -> Self {
         self.select.joinAnotherInstance(select)
+        return self
     }
     
+    @discardableResult
     public func select(_ str: String) -> Self {
         select.field(str)
         return self
     }
     
+    @discardableResult
     public func select<T>(all: T.Type) -> Self where T: Model {
         select.all(all)
         return self
     }
     
+    @discardableResult
     public func select<T>(_ kp: T, as: String? = nil) -> Self where T: FQUniversalKeyPath {
         select.field(kp)
         return self
     }
     
+    @discardableResult
     public func select<T>(distinct kp: T, as: String? = nil) -> Self where T: FQUniversalKeyPath {
         select.distinct(kp, as: `as`)
         return self
@@ -58,44 +64,53 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     
     public func select<T>(count kp: T, as: String? = nil) -> Self where T: FQUniversalKeyPath{
         select.func(.count(kp), path: kp, as: `as`) //TODO
+    @discardableResult
         return self
     }
     
     public func select(as: String? = nil, _ json: FQJSON) -> Self {
+    @discardableResult
         select.field(as: `as`, json)
         return self
     }
     
+    @discardableResult
     public func from(_ db: String, as asKey: String) -> Self {
         froms.append("\(db.doubleQuotted) as \(asKey.doubleQuotted)")
         return self
     }
     
+    @discardableResult
     public func from(_ db: String) -> Self {
         froms.append("\(db.doubleQuotted)")
         return self
     }
     
+    @discardableResult
     public func from<T>(_ db: T.Type) -> Self where T: Model {
         froms.append(T.FQType.query)
         return self
     }
     
+    @discardableResult
     public func from<T>(_ db: FQAlias<T>) -> Self {
         froms.append(db.query)
         return self
     }
     
+    @discardableResult
     public func from(raw: String) -> Self {
         froms.append(raw)
         return self
     }
     
+    @discardableResult
     public func join<T>(_ mode: FQJoinMode, _ table: T.Type, where: FQWhere) -> Self where T: Model {
         joins.append(FQJoin(mode, table: T.FQType.self, where: `where`))
         return self
     }
     
+    @discardableResult
     public func join<T>(_ mode: FQJoinMode, _ table: FQAlias<T>, where: FQWhere) -> Self where T: Model {
         joins.append(FQJoin(mode, table: table, where: `where`))
         return self
