@@ -269,6 +269,7 @@ public func <= <M, T>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: T) -> FQPred
 }
 
 // IN
+infix operator ~~
 public func ~~ <T>(lhs: T, rhs: [T.AType?]) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .in, value: .arrayOfOptionals(rhs))
 }
@@ -288,6 +289,7 @@ public func ~~ <M>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: FluentQuery) ->
 }
 
 // NOT IN
+infix operator !~
 public func !~ <T>(lhs: T, rhs: [T.AType?]) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .notIn, value: .arrayOfOptionals(rhs))
 }
