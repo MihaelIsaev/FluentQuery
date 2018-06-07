@@ -36,7 +36,6 @@ public class FluentQuery: FQPart, CustomStringConvertible {
         self.select.joinAnotherInstance(select)
     }
     
-    @available(*, deprecated: 1.0, message: "will soon become unavailable.")
     public func select(_ str: String) -> Self {
         select.field(str)
         return self
