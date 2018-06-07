@@ -158,6 +158,9 @@ public func == <T>(lhs: T, rhs:T.AType?) -> FQPredicateGenericType where T: FQUn
 public func == <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
     return FQPredicate(kp: lhs, operation: .equal, value: .simpleAny(rhs.rawValue))
 }
+public func == <T>(lhs: T, rhs: T.AType.RawValue) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
+    return FQPredicate(kp: lhs, operation: .equal, value: .simpleAny(rhs))
+}
 // == for join
 public func == <T, U>(lhs: T, rhs: U) -> FQPredicateGenericType where T: FQUniversalKeyPath, U: FQUniversalKeyPath {
     return FQJoinPredicate(lhs: lhs, operation: .equal, rhs: rhs)
@@ -179,6 +182,9 @@ public func != <T>(lhs: T, rhs: T.AType?) -> FQPredicateGenericType where T: FQU
 }
 public func != <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
     return FQPredicate(kp: lhs, operation: .notEqual, value: .simpleAny(rhs.rawValue))
+}
+public func != <T>(lhs: T, rhs: T.AType.RawValue) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
+    return FQPredicate(kp: lhs, operation: .notEqual, value: .simpleAny(rhs))
 }
 // != for join
 public func != <T, U>(lhs: T, rhs: U) -> FQPredicateGenericType where T: FQUniversalKeyPath, U: FQUniversalKeyPath {
@@ -202,6 +208,9 @@ public func > <T>(lhs: T, rhs: T.AType?) -> FQPredicateGenericType where T: FQUn
 public func > <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
     return FQPredicate(kp: lhs, operation: .greaterThan, value: .simpleAny(rhs.rawValue))
 }
+public func > <T>(lhs: T, rhs: T.AType.RawValue) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
+    return FQPredicate(kp: lhs, operation: .greaterThan, value: .simpleAny(rhs))
+}
 // > aggregate function
 public func > <M, K>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: K) -> FQPredicateGenericType where M: FQUniversalKeyPath, K: Numeric {
     return FQPredicate(kp: lhs, operation: .greaterThan, value: .simpleAny(rhs))
@@ -219,6 +228,9 @@ public func < <T>(lhs: T, rhs: T.AType?) -> FQPredicateGenericType where T: FQUn
 }
 public func < <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
     return FQPredicate(kp: lhs, operation: .lessThan, value: .simpleAny(rhs.rawValue))
+}
+public func < <T>(lhs: T, rhs: T.AType.RawValue) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
+    return FQPredicate(kp: lhs, operation: .lessThan, value: .simpleAny(rhs))
 }
 // < aggregate function
 public func < <M, K>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: K) -> FQPredicateGenericType where M: FQUniversalKeyPath, K: Numeric {
@@ -238,6 +250,9 @@ public func >= <T>(lhs: T, rhs: T.AType?) -> FQPredicateGenericType where T: FQU
 public func >= <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
     return FQPredicate(kp: lhs, operation: .greaterThanOrEqual, value: .simpleAny(rhs.rawValue))
 }
+public func >= <T>(lhs: T, rhs: T.AType.RawValue) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
+    return FQPredicate(kp: lhs, operation: .greaterThanOrEqual, value: .simpleAny(rhs))
+}
 // >= aggregate function
 public func >= <M, K>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: K) -> FQPredicateGenericType where M: FQUniversalKeyPath, K: Numeric {
     return FQPredicate(kp: lhs, operation: .greaterThanOrEqual, value: .simpleAny(rhs))
@@ -255,6 +270,9 @@ public func <= <T>(lhs: T, rhs: T.AType?) -> FQPredicateGenericType where T: FQU
 }
 public func <= <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
     return FQPredicate(kp: lhs, operation: .lessThanOrEqual, value: .simpleAny(rhs.rawValue))
+}
+public func <= <T>(lhs: T, rhs: T.AType.RawValue) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
+    return FQPredicate(kp: lhs, operation: .lessThanOrEqual, value: .simpleAny(rhs))
 }
 
 // <= aggregate function
@@ -276,6 +294,9 @@ public func ~~ <T>(lhs: T, rhs: [T.AType?]) -> FQPredicateGenericType where T: F
 public func ~~ <T>(lhs: T, rhs: [T.AType]) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
     return FQPredicate(kp: lhs, operation: .in, value: .arrayOfAny(rhs.map { $0.rawValue }))
 }
+public func ~~ <T>(lhs: T, rhs: [T.AType.RawValue]) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
+    return FQPredicate(kp: lhs, operation: .in, value: .arrayOfAny(rhs.map { $0 }))
+}
 // IN SUBQUERY
 public func ~~ <T>(lhs: T, rhs: FluentQuery) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .in, value: .string(rhs.query.roundBracketted))
@@ -295,6 +316,9 @@ public func !~ <T>(lhs: T, rhs: [T.AType?]) -> FQPredicateGenericType where T: F
 }
 public func !~ <T>(lhs: T, rhs: [T.AType]) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
     return FQPredicate(kp: lhs, operation: .notIn, value: .arrayOfAny(rhs.map { $0.rawValue }))
+}
+public func !~ <T>(lhs: T, rhs: [T.AType.RawValue]) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: RawRepresentable {
+    return FQPredicate(kp: lhs, operation: .notIn, value: .arrayOfAny(rhs.map { $0 }))
 }
 // NOT IN SUBQUERY
 public func !~ <T>(lhs: T, rhs: FluentQuery) -> FQPredicateGenericType where T: FQUniversalKeyPath {
