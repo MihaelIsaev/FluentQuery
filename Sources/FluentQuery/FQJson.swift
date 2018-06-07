@@ -114,7 +114,7 @@ extension FQJSON {
     public enum Functions: FQJSONFuncOption {
         typealias KPAndWheres = (kp: String, wheres: String)
         
-        case rowToJson(String) //m
+        case row(String) //m
         case extractEpochFromTime(String) //kp
         case count(String) //kp
         case countWhere(String, String) //kp, w
@@ -123,7 +123,7 @@ extension FQJSON {
         public var description: String {
             let description: String
             switch self {
-            case .rowToJson:
+            case .row:
                 description = "SELECT to_jsonb(%)"
             case .extractEpochFromTime:
                 description = "extract(epoch from %)"
@@ -141,7 +141,7 @@ extension FQJSON {
             let valueKey = "%"
             let whereKey = "$"
             switch self {
-            case .rowToJson: fallthrough
+            case .row: fallthrough
             case .extractEpochFromTime: fallthrough
             case .count:
                 return description.replacingOccurrences(of: valueKey, with: "\(value)")
@@ -159,7 +159,7 @@ extension FQJSON {
         var value: Any {
             let value: Any
             switch self {
-            case let .rowToJson(b):
+            case let .row(b):
                 value = b
             case let .extractEpochFromTime(t):
                 value = t
@@ -250,12 +250,12 @@ extension FQJSON {
     
     //MARK: Mirror for ModelAlias only based functions
     public enum FunctionWithModelAlias<T>: FQJSONFuncOption where T: Model {
-        case rowToJson(FQAlias<T>)
+        case row(FQAlias<T>)
         case none()
         
         var mirror: Functions {
             switch self {
-            case .rowToJson(let v): return .rowToJson("\(v.alias.doubleQuotted)")
+            case .row(let v): return .row("\(v.alias.doubleQuotted)")
             case .none: return .empty()
             }
         }
@@ -279,12 +279,12 @@ extension FQJSON {
     
     //MARK: Mirror for Model only based functions
     public enum FunctionWithModel<T>: FQJSONFuncOption where T: Model {
-        case rowToJson(T.Type)
+        case row(T.Type)
         case none()
         
         var mirror: Functions {
             switch self {
-            case .rowToJson: return .rowToJson("\(T.FQType.alias.doubleQuotted)")
+            case .row: return .row("\(T.FQType.alias.doubleQuotted)")
             case .none: return .empty()
             }
         }
