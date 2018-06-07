@@ -19,7 +19,7 @@ public enum FluentQueryPredicateOperator: String {
     case isNotNull = "IS NOT NULL"
 }
 
-public class FluentQuery: FQPart {
+public class FluentQuery: FQPart, CustomStringConvertible {
     public var select: FQSelect = FQSelect()
     public var froms: [FQPart] = []
     public var joins: [FQJoinGenericType] = []
@@ -206,6 +206,10 @@ public class FluentQuery: FQPart {
     
     public func execute<D, T>(on conn: D, andDecode to: [T].Type) throws -> Future<[T]> where D: PostgreSQLConnection, T: Decodable {
         return try execute(on: conn).decode(T.self)
+    }
+    
+    public var description: String {
+        return query
     }
 }
 
