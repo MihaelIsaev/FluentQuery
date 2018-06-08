@@ -56,7 +56,7 @@ public class FQSelect: FQPart {
     }
     
     @discardableResult
-    public func `func`<M, T>(_ func: FQAggregate.FunctionWithKeyPath<M>, path kp: T, as: String? = nil) -> Self where M: FQUniversalKeyPath, T: FQUniversalKeyPath {
+    public func `func`<M, T>(_ func: FQAggregate.FunctionWithKeyPath<M>, keyPath kp: T, as: String? = nil) -> Self where M: FQUniversalKeyPath, T: FQUniversalKeyPath {
         let function = `func`.func.replacingOccurrences(of: FQAggregate.valueKey, with: kp.queryValue)
         _append(function, `as`)
         return self
@@ -70,6 +70,18 @@ public class FQSelect: FQPart {
     
     @discardableResult
     public func `func`<M>(_ func: FQJSON.FunctionWithModel<M>, as: String? = nil) -> Self where M: Model {
+        _append(`func`.func.roundBracketted, `as`)
+        return self
+    }
+    
+    @discardableResult
+    public func `func`<M, V>(_ func: FQJSON.FuncOptionKP<M, V>, as: String? = nil) -> Self where M: Model {
+        _append(`func`.func.roundBracketted, `as`)
+        return self
+    }
+    
+    @discardableResult
+    public func `func`<M, V>(_ func: FQJSON.FuncOptionAKP<M, V>, as: String? = nil) -> Self where M: Model {
         _append(`func`.func.roundBracketted, `as`)
         return self
     }

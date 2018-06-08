@@ -97,6 +97,36 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     }
     
     @discardableResult
+    public func select<M, T>(_ func: FQAggregate.FunctionWithKeyPath<M>, keyPath: T, as: String) -> Self where M: FQUniversalKeyPath, T: FQUniversalKeyPath {
+        select.func(`func`, keyPath: keyPath,  as: `as`)
+        return self
+    }
+    
+    @discardableResult
+    public func select<M>(_ func: FQJSON.FunctionWithModelAlias<M>, as: String) -> Self where M: Model {
+        select.func(`func`, as: `as`)
+        return self
+    }
+    
+    @discardableResult
+    public func select<M>(_ func: FQJSON.FunctionWithModel<M>, as: String) -> Self where M: Model {
+        select.func(`func`, as: `as`)
+        return self
+    }
+    
+    @discardableResult
+    public func select<M, V>(_ func: FQJSON.FuncOptionKP<M, V>, as: String) -> Self where M: Model {
+        select.func(`func`, as: `as`)
+        return self
+    }
+    
+    @discardableResult
+    public func select<M, V>(_ func: FQJSON.FuncOptionAKP<M, V>, as: String) -> Self where M: Model {
+        select.func(`func`, as: `as`)
+        return self
+    }
+    
+    @discardableResult
     public func from(_ db: String, as asKey: String) -> Self {
         froms.append("\(db.doubleQuotted) as \(asKey.doubleQuotted)")
         return self
