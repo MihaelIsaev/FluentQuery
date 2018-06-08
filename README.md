@@ -27,7 +27,7 @@ try FluentQuery()
     .select(all: User.self)
     .select(\Pet.name, as: "petName")
     .select(\PetType.name, as: "petType")
-    .select(count: \PetToy.id, as: "petToysQuantity")
+    .select(.count(\PetToy.id), as: "petToysQuantity")
     .from(User.self)
     .join(.left, Pet.self, where: FQWhere(\Pet.id == \User.idPet))
     .join(.left, PetType.self, where: FQWhere(\PetType.id == \Pet.idType))
@@ -59,7 +59,7 @@ Edit your `Package.swift`
 
 ```swift
 //add this repo to dependencies
-.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.4.0")
+.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.4.1")
 //and don't forget about targets
 //"FluentQuery"
 ```
@@ -115,6 +115,7 @@ final class Car: Model {
 }
 ```
 and related models
+**PLEASE NOTE: nested models should conform to `FQDecodable` protocol**
 ```swift
 final class Brand: Model, FQDecodable {
   var id: UUID?
@@ -158,59 +159,43 @@ Here's example request code for that situation
 
 ```swift
 func getListOfCars(_ req: Request) throws -> Future<[PublicCar]> {
-  let query = FluentQuery()
-    .select(distinct: \Car.id)
-    .select(FQJSON(.binary)
-      .field("id", \Car.id)
-      .field("year", \Car.year)
-      .field("color", \Car.color)
-      .field("engineCapacity", \Car.engineCapacity)
-      .field("brand", func: .rowToJson(Brand.self))
-      .field("model", func: .rowToJson(Model.self))
-      .field("bodyType", func: .rowToJson(BodyType.self))
-      .field("engineType", func: .rowToJson(EngineType.self))
-      .field("gearboxType", func: .rowToJson(GearboxType.self)),
-    as: "car")
-    .from(Car.self)
-    .join(.left, Brand.self, where: FQWhere(\Brand.id == \Car.idBrand))
-    .join(.left, Model.self, where: FQWhere(\Model.id == \Car.idModel))
-    .join(.left, BodyType.self, where: FQWhere(\BodyType.id == \Car.idBodyType))
-    .join(.left, EngineType.self, where: FQWhere(\EngineType.id == \Car.idEngineType))
-    .join(.left, GearboxType.self, where: FQWhere(\GearboxType.id == \Car.idGearboxType))
-    .groupBy(FQGroupBy(\Car.id)
-      .and(\Brand.id)
-      .and(\Model.id)
-      .and(\BodyType.id)
-      .and(\EngineType.id)
-      .and(\GearboxType.id)
-    )
-    .orderBy(FQOrderBy(\Brand.value, .ascending)
-      .and(\Model.value, .ascending)
-    )
-  let rawQuery: String = query.build()
   return req.requestPooledConnection(to: .psql).flatMap { conn -> EventLoopFuture<[PublicCar]> in
-    return conn.query(rawQuery).map { queryResult -> [PublicCar] in
       defer { try? req.releasePooledConnection(conn, to: .psql) }
-      return try queryResult.map {
-        guard let car = $0.firstValue(forColumn: "car")?.data else {
-          throw Abort(.internalServerError, reason: "Can't get car")
-        }
-        return try JSONDecoder().decode(PublicCar.self, from: car[1...])
-      }
-    }
+      return FluentQuery()
+        .select(distinct: \Car.id)
+        .select(\Car.year, as: "year")
+        .select(\Car.color, as: "color")
+        .select(\Car.engineCapacity, as: "engineCapacity")
+        .select(.row(Brand.self), as: "brand")
+        .select(.row(Model.self), as: "model")
+        .select(.row(BodyType.self), as: "bodyType")
+        .select(.row(EngineType.self), as: "engineType")
+        .select(.row(GearboxType.self), as: "gearboxType")
+        .from(Car.self)
+        .join(.left, Brand.self, where: FQWhere(\Brand.id == \Car.idBrand))
+        .join(.left, Model.self, where: FQWhere(\Model.id == \Car.idModel))
+        .join(.left, BodyType.self, where: FQWhere(\BodyType.id == \Car.idBodyType))
+        .join(.left, EngineType.self, where: FQWhere(\EngineType.id == \Car.idEngineType))
+        .join(.left, GearboxType.self, where: FQWhere(\GearboxType.id == \Car.idGearboxType))
+        .groupBy(FQGroupBy(\Car.id)
+          .and(\Brand.id)
+          .and(\Model.id)
+          .and(\BodyType.id)
+          .and(\EngineType.id)
+          .and(\GearboxType.id)
+        )
+        .orderBy(FQOrderBy(\Brand.value, .ascending)
+          .and(\Model.value, .ascending)
+        )
+        .execute(on: conn)
+        .decode(PublicCar.self)
   }
 }
 ```
 
-**PLEASE NOTE: nested models should conform to `FQDecodable` protocol**
+Hahah, that's cool right? 😃
 
 As you can see we've build complex query to get all depended values and decoded postgres raw response to our codable model.
-
-We used `FQJSON` (`jsonb_build_object` equivalent) to build the struct as we have in our codable model to conveniently decode it.
-
-In the future when Fluent will make public function for easy decoding for whole raw postgres response we will be able to simplify this request, but for now we have what we have.
-
-Hahah, but that's cool right? 😃
 
 <details>
     <summary>BTW, this is a raw SQL equivalent</summary>
@@ -247,10 +232,10 @@ If you will change your models in the future you'll have to remember where you u
 With `FluentQuery`'s query builder you can use `if/else` wherever you need. And it's super convenient to compare with using `if/else` while createing raw query string. 😉
 #### The reason #3
 It is faster than multiple consecutive requests
+#### The reason #4
+You can join on join on join on join on join on join 😁😁😁 
 
-To tell you the truth `Fluent` can do queries like this and it will look better and will take the same time
-
-But if to speak about real complex queries when you need to join on joined values, count something on the fly and so on - here this lib can be super useful! 🔥
+With this lib you can do real complex queries! 🔥 And you still flexible cause you can use if/else statements while building and even create two separate queries with the same basement using `let separateQuery = FluentQuery(copy: originalQuery)` 🕺
 
 ### Methods
 
@@ -272,10 +257,11 @@ So to add what you want to select call these methods one by one
 | .select(someAlias.k(\.id)) | "some_alias".id |
 | .select(distinct: \Car.id) | DISTINCT "Car".id |
 | .select(distinct: someAlias.k(\.id)) | DISTINCT "some_alias".id |
-| .select(count: \Car.id) | DISTINCT "Car".id |
-| .select(count: someAlias.k(\.id)) | DISTINCT "some_alias".id |
-
-_Yeah-yeah in the future I have to add all available aggregate functions(almost done), and also json functions._
+| .select(.count(\Car.id), as: "count") | COUNT("Cars".id) as "count" |
+| .select(.sum(\Car.value), as: "sum") | SUM("Cars".value) as "sum" |
+| .select(.average(\Car.value), as: "average") | AVG("Cars".value) as "average" |
+| .select(.min(\Car.value), as: "min") | MIN("Cars".value) as "min" |
+| .select(.max(\Car.value), as: "max") | MAX("Cars".value) as "max" |
 
 _BTW, read about aliases below_
 
