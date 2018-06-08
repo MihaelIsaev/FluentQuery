@@ -59,7 +59,7 @@ Edit your `Package.swift`
 
 ```swift
 //add this repo to dependencies
-.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.3.1")
+.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.4.0")
 //and don't forget about targets
 //"FluentQuery"
 ```
@@ -116,23 +116,23 @@ final class Car: Model {
 ```
 and related models
 ```swift
-final class Brand: Model {
+final class Brand: Model, FQDecodable {
   var id: UUID?
   var value: String
 }
-final class Model: Model {
+final class Model: Model, FQDecodable {
   var id: UUID?
   var value: String
 }
-final class BodyType: Model {
+final class BodyType: Model, FQDecodable {
   var id: UUID?
   var value: String
 }
-final class EngineType: Model {
+final class EngineType: Model, FQDecodable {
   var id: UUID?
   var value: String
 }
-final class GearboxType: Model {
+final class GearboxType: Model, FQDecodable {
   var id: UUID?
   var value: String
 }
@@ -160,7 +160,7 @@ Here's example request code for that situation
 func getListOfCars(_ req: Request) throws -> Future<[PublicCar]> {
   let query = FluentQuery()
     .select(distinct: \Car.id)
-    .select(as: "car", FQJSON(.binary)
+    .select(FQJSON(.binary)
       .field("id", \Car.id)
       .field("year", \Car.year)
       .field("color", \Car.color)
@@ -169,8 +169,8 @@ func getListOfCars(_ req: Request) throws -> Future<[PublicCar]> {
       .field("model", func: .rowToJson(Model.self))
       .field("bodyType", func: .rowToJson(BodyType.self))
       .field("engineType", func: .rowToJson(EngineType.self))
-      .field("gearboxType", func: .rowToJson(GearboxType.self))
-    )    
+      .field("gearboxType", func: .rowToJson(GearboxType.self)),
+    as: "car")
     .from(Car.self)
     .join(.left, Brand.self, where: FQWhere(\Brand.id == \Car.idBrand))
     .join(.left, Model.self, where: FQWhere(\Model.id == \Car.idModel))
@@ -201,6 +201,8 @@ func getListOfCars(_ req: Request) throws -> Future<[PublicCar]> {
   }
 }
 ```
+
+**PLEASE NOTE: nested models should conform to `FQDecodable` protocol**
 
 As you can see we've build complex query to get all depended values and decoded postgres raw response to our codable model.
 
@@ -353,9 +355,15 @@ FQWhere(\Car.engineCapacity > 1.6).and(FQWhere(\Brand.value ~~ "YO").or(\Brand.v
 | ~= | LIKE '%str' |
 | ~~ | LIKE '%str%' |
 | =~ | LIKE 'str%' |
+| ~% | ILIKE '%str' |
+| %% | ILIKE '%str%' |
+| %~ | ILIKE 'str%' |
 | !~= | NOT LIKE '%str' |
 | !~~ | NOT LIKE '%str%' |
 | !=~ | NOT LIKE 'str%' |
+| !~% | NOT ILIKE '%str' |
+| !%% | NOT ILIKE '%str%' |
+| !%~ | NOT ILIKE 'str%' |
 
 #### Having
 
@@ -414,8 +422,8 @@ but also it accept function as value, here's the list of available functions
 
 | Function  | SQL equivalent |
 | --------- | -------------- |
-| rowToJson(Car.self) | SELECT row_to_json("Cars") |
-| rowToJson(someAlias) | SELECT row_to_json("some_alias") |
+| row(Car.self) | SELECT row_to_json("Cars") |
+| row(someAlias) | SELECT row_to_json("some_alias") |
 | extractEpochFromTime(\Car.createdAt) | extract(epoch from "Cars"."createdAt") |
 | extractEpochFromTime(someAlias.k(\.createdAt)) | extract(epoch from "some_alias"."createdAt") |
 | count(\Car.id) | COUNT("Cars".id) |
