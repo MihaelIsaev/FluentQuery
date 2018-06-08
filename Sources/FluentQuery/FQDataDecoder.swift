@@ -2,6 +2,7 @@ import Foundation
 import FluentPostgreSQL
 import PostgreSQL
 
+public protocol FQDecodable: Codable, PostgreSQLJSONCustomConvertible {}
 extension EventLoopFuture where T == [[PostgreSQL.PostgreSQLColumn: PostgreSQLData]] {
     public func decode<T>(_ to: T.Type) throws -> EventLoopFuture<[T]> where T: Decodable {
         return map { return try $0.decode(T.self) }
