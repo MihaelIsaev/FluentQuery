@@ -85,12 +85,6 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     }
     
     @discardableResult
-    public func select<T>(count kp: T, as: String) -> Self where T: FQUniversalKeyPath{
-        select.func(.count(kp), keyPath: kp, as: `as`) //TODO
-        return self
-    }
-    
-    @discardableResult
     public func select(_ json: FQJSON, as: String) -> Self {
         select.field(as: `as`, json)
         return self
