@@ -202,17 +202,14 @@ As you can see we've build complex query to get all depended values and decoded 
         
     SELECT
     DISTINCT c.id,
-    jsonb_build_object(
-      'id', c.id,
-      'year', c.year,
-      'color', c.color,
-      'engineCapacity', c."engineCapacity",
-      'brand', (SELECT row_to_json(brand)),
-      'model', (SELECT row_to_json("Models")),
-      'bodyType', (SELECT row_to_json("BodyTypes")),
-      'engineType', (SELECT row_to_json("EngineTypes")),
-      'gearboxType', (SELECT row_to_json("GearboxTypes"))
-    ) as "car"
+    c.year,
+    c.color,
+    c."engineCapacity",
+    (SELECT toJsonb(brand)) as "brand",
+    (SELECT toJsonb(model)) as "model",
+    (SELECT toJsonb(bt)) as "bodyType",
+    (SELECT toJsonb(et)) as "engineType",
+    (SELECT toJsonb(gt)) as "gearboxType"
     FROM "Cars" as c
     LEFT JOIN "Brands" as brand ON c."idBrand" = brand.id
     LEFT JOIN "Models" as model ON c."idModel" = model.id
