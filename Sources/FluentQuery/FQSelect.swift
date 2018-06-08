@@ -56,9 +56,8 @@ public class FQSelect: FQPart {
     }
     
     @discardableResult
-    public func `func`<M, T>(_ func: FQAggregate.FunctionWithKeyPath<M>, keyPath kp: T, as: String? = nil) -> Self where M: FQUniversalKeyPath, T: FQUniversalKeyPath {
-        let function = `func`.func.replacingOccurrences(of: FQAggregate.valueKey, with: kp.queryValue)
-        _append(function, `as`)
+    public func `func`<M>(_ func: FQAggregate.FunctionWithKeyPath<M>, as: String? = nil) -> Self where M: FQUniversalKeyPath {
+        _append(`func`.func, `as`)
         return self
     }
     

@@ -97,8 +97,8 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     }
     
     @discardableResult
-    public func select<M, T>(_ func: FQAggregate.FunctionWithKeyPath<M>, keyPath: T, as: String) -> Self where M: FQUniversalKeyPath, T: FQUniversalKeyPath {
-        select.func(`func`, keyPath: keyPath,  as: `as`)
+    public func select<M>(_ func: FQAggregate.FunctionWithKeyPath<M>, as: String) -> Self where M: FQUniversalKeyPath {
+        select.func(`func`,  as: `as`)
         return self
     }
     
