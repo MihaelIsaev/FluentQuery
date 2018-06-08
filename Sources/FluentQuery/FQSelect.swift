@@ -12,7 +12,11 @@ public class FQSelect: FQPart {
     
     var fields: [FQPart] = []
     
-    public init() {}
+    public init(copy from: FQSelect? = nil) {
+        if let from = from {
+            fields = from.fields.map { $0 }
+        }
+    }
     
     //@available(*, deprecated: 1.0, message: "will soon become unavailable.")
     @discardableResult

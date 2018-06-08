@@ -4,6 +4,12 @@ import Fluent
 public class FQWhere: FQPart {
     var wheres: [FQPart] = []
     
+    public init(copy from: FQWhere? = nil) {
+        if let from = from {
+            wheres = from.wheres.map { $0 }
+        }
+    }
+    
     public init(_ predicates: FQPredicateGenericType...) {
         for (index, predicate) in predicates.enumerated() {
             if index > 0 {

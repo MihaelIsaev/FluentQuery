@@ -4,7 +4,11 @@ import Fluent
 public class FQGroupBy: FQPart {
     var parts: [FQPart] = []
     
-    public init () {}
+    public init(copy from: FQGroupBy? = nil) {
+        if let from = from {
+            parts = from.parts.map { $0 }
+        }
+    }
     
     public init<T>(_ kp: T) where T: FQUniversalKeyPath {
         add(kp)

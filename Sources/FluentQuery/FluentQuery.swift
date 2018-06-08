@@ -30,7 +30,27 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     public var offset: Int?
     public var limit: Int?
     
-    public init() {}
+    public init(copy from: FluentQuery? = nil) {
+        if let from = from {
+            select = FQSelect(copy: from.select)
+            froms = from.froms.map { $0 }
+            joins = from.joins.map { $0 }
+            if let `where` = from.where {
+                self.where = FQWhere(copy: `where`)
+            }
+            if let groupBy = groupBy {
+                self.groupBy = FQGroupBy(copy: groupBy)
+            }
+            if let having = from.having {
+                self.having = FQWhere(copy: having)
+            }
+            if let orderBy = from.orderBy {
+                self.orderBy = FQOrderBy(copy: orderBy)
+            }
+            offset = from.offset
+            limit = from.limit
+        }
+    }
     
     @discardableResult
     public func select(_ select: FQSelect) -> Self {

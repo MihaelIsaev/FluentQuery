@@ -23,7 +23,11 @@ public class FQOrderBy: FQPart {
     
     var parts: [Data] = []
     
-    public init () {}
+    public init(copy from: FQOrderBy? = nil) {
+        if let from = from {
+            parts = from.parts.map { $0 }
+        }
+    }
     
     public init<T>(_ kp: T, _ mode: Mode) where T: FQUniversalKeyPath {
         add(kp, mode)
