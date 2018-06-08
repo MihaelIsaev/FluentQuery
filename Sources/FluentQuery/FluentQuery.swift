@@ -14,7 +14,9 @@ public enum FluentQueryPredicateOperator: String {
     case notIn = "NOT IN"
     case between = "BETWEEN"
     case like = "LIKE"
+    case ilike = "ILIKE"
     case notLike = "NOT LIKE"
+    case notILike = "NOT ILIKE"
     case isNull = "IS NULL"
     case isNotNull = "IS NOT NULL"
 }

@@ -345,6 +345,20 @@ public func ~~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUn
     return FQPredicate(kp: lhs, operation: .like, value: .string("%\(rhs)%"))
 }
 
+// ILIKE
+infix operator ~%
+public func ~% <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
+    return FQPredicate(kp: lhs, operation: .ilike, value: .string("%\(rhs)"))
+}
+infix operator %~
+public func %~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
+    return FQPredicate(kp: lhs, operation: .ilike, value: .string("\(rhs)%"))
+}
+infix operator %%
+public func %% <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
+    return FQPredicate(kp: lhs, operation: .ilike, value: .string("%\(rhs)%"))
+}
+
 // NOT LIKE
 infix operator !~=
 public func !~= <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
@@ -357,6 +371,20 @@ public func !=~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQU
 infix operator !~~
 public func !~~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .notLike, value: .string("%\(rhs)%"))
+}
+
+// NOT ILIKE
+infix operator !~%
+public func !~% <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
+    return FQPredicate(kp: lhs, operation: .notILike, value: .string("%\(rhs)"))
+}
+infix operator !%~
+public func !%~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
+    return FQPredicate(kp: lhs, operation: .notILike, value: .string("\(rhs)%"))
+}
+infix operator !%%
+public func !%% <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
+    return FQPredicate(kp: lhs, operation: .notILike, value: .string("%\(rhs)%"))
 }
 
 //FUTURE: create method which can handle two predicates
