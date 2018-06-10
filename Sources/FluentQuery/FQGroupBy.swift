@@ -28,4 +28,10 @@ public class FQGroupBy: FQPart {
     public var query: String {
         return parts.map { $0.query }.joined(separator: ", ")
     }
+    
+    public func joinAnotherInstance(_ inst: FQGroupBy) {
+        if inst.parts.count > 0 {
+            parts.append(contentsOf: inst.parts)
+        }
+    }
 }

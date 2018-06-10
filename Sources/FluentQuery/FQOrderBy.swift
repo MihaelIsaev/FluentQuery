@@ -47,5 +47,11 @@ public class FQOrderBy: FQPart {
     public var query: String {
         return parts.map { $0.query }.joined(separator: ", ")
     }
+    
+    public func joinAnotherInstance(_ inst: FQOrderBy) {
+        if inst.parts.count > 0 {
+            parts.append(contentsOf: inst.parts)
+        }
+    }
 }
 
