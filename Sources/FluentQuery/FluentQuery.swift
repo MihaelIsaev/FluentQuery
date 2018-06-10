@@ -164,25 +164,41 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     
     @discardableResult
     public func `where`(_ where: FQWhere) -> Self {
-        self.`where` = `where`
+        if let w = self.`where` {
+            w.joinAnotherInstance(`where`, by: "AND")
+        } else {
+            self.`where` = `where`
+        }
         return self
     }
     
     @discardableResult
     public func having(_ where: FQWhere) -> Self {
-        having = `where`
+        if let w = self.having {
+            w.joinAnotherInstance(`where`, by: "AND")
+        } else {
+            self.having = `where`
+        }
         return self
     }
     
     @discardableResult
     public func groupBy(_ groupBy: FQGroupBy) -> Self {
-        self.groupBy = groupBy
+        if let w = self.groupBy {
+            w.joinAnotherInstance(groupBy)
+        } else {
+            self.groupBy = groupBy
+        }
         return self
     }
     
     @discardableResult
     public func orderBy(_ orderBy: FQOrderBy) -> Self {
-        self.orderBy = orderBy
+        if let w = self.orderBy {
+            w.joinAnotherInstance(orderBy)
+        } else {
+            self.orderBy = orderBy
+        }
         return self
     }
     
