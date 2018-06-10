@@ -73,11 +73,6 @@ I faced with that problem and I started developing this lib to write raw SQL que
 
 And let's take a look what we have :)
 
-### Known Issues
-
-Predicates doesn't work yet with `Date` properties cause dates isn't formatted properly in `FQPredicate` class
-
-`FQSelect` methods should support `FQAggregate`
 
 ### How it works
 
