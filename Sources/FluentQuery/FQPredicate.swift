@@ -130,8 +130,15 @@ public class FQPredicate<T>: FQPart, FQPredicateGenericType  where T: FQUniversa
         }
     }
     
+    public func formatProperty() -> String {
+        if T.AType.self is [String].Type{
+            return "array_to_string(".appending(property).appending(", ',') ")
+        }
+        return property
+    }
+    
     public var query: String {
-        var result = "\(property) \(operation.rawValue) "
+        var result = "\(formatProperty()) \(operation.rawValue) "
         switch value {
         case .simpleAny(let v):
             result.append(formatValue(v))
@@ -342,11 +349,20 @@ infix operator ~=
 public func ~= <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .like, value: .string("%\(rhs)"))
 }
+public func ~= <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
+    return FQPredicate(kp: lhs, operation: .like, value: .string("%\(rhs)"))
+}
 infix operator =~
 public func =~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .like, value: .string("\(rhs)%"))
 }
+public func =~ <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
+    return FQPredicate(kp: lhs, operation: .like, value: .string("\(rhs)%"))
+}
 public func ~~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
+    return FQPredicate(kp: lhs, operation: .like, value: .string("%\(rhs)%"))
+}
+public func ~~ <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
     return FQPredicate(kp: lhs, operation: .like, value: .string("%\(rhs)%"))
 }
 
@@ -355,12 +371,21 @@ infix operator ~%
 public func ~% <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .ilike, value: .string("%\(rhs)"))
 }
+public func ~% <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
+    return FQPredicate(kp: lhs, operation: .ilike, value: .string("%\(rhs)"))
+}
 infix operator %~
 public func %~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .ilike, value: .string("\(rhs)%"))
 }
+public func %~ <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
+    return FQPredicate(kp: lhs, operation: .ilike, value: .string("\(rhs)%"))
+}
 infix operator %%
 public func %% <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
+    return FQPredicate(kp: lhs, operation: .ilike, value: .string("%\(rhs)%"))
+}
+public func %% <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
     return FQPredicate(kp: lhs, operation: .ilike, value: .string("%\(rhs)%"))
 }
 
@@ -369,12 +394,21 @@ infix operator !~=
 public func !~= <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .notLike, value: .string("%\(rhs)"))
 }
+public func !~= <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
+    return FQPredicate(kp: lhs, operation: .notLike, value: .string("%\(rhs)"))
+}
 infix operator !=~
 public func !=~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .notLike, value: .string("\(rhs)%"))
 }
+public func !=~ <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
+    return FQPredicate(kp: lhs, operation: .notLike, value: .string("\(rhs)%"))
+}
 infix operator !~~
 public func !~~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
+    return FQPredicate(kp: lhs, operation: .notLike, value: .string("%\(rhs)%"))
+}
+public func !~~ <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
     return FQPredicate(kp: lhs, operation: .notLike, value: .string("%\(rhs)%"))
 }
 
@@ -383,14 +417,24 @@ infix operator !~%
 public func !~% <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .notILike, value: .string("%\(rhs)"))
 }
+public func !~% <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
+    return FQPredicate(kp: lhs, operation: .notILike, value: .string("%\(rhs)"))
+}
 infix operator !%~
 public func !%~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
+    return FQPredicate(kp: lhs, operation: .notILike, value: .string("\(rhs)%"))
+}
+public func !%~ <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
     return FQPredicate(kp: lhs, operation: .notILike, value: .string("\(rhs)%"))
 }
 infix operator !%%
 public func !%% <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .notILike, value: .string("%\(rhs)%"))
 }
+public func !%% <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
+    return FQPredicate(kp: lhs, operation: .notILike, value: .string("%\(rhs)%"))
+}
 
 //FUTURE: create method which can handle two predicates
 //FUTURE: generate paths like this `(r."carEquipment"->>'interior')::uuid` with type casting
+//FUTURE: allow to pass array of functions like (lhs: T..., rhs: T)
