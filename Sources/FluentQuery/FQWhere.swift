@@ -19,6 +19,7 @@ public class FQWhere: FQPart {
         }
     }
     
+    @discardableResult
     public func and(_ predicates: FQPredicateGenericType...)  -> Self {
         for predicate in predicates {
             wheres.append("AND")
@@ -27,11 +28,13 @@ public class FQWhere: FQPart {
         return self
     }
     
+    @discardableResult
     public func and(_ inst: FQWhere)  -> Self {
         joinAnotherInstance(inst, by: "AND")
         return self
     }
     
+    @discardableResult
     public func or(_ predicates: FQPredicateGenericType...)  -> Self {
         for predicate in predicates {
             wheres.append("OR")
@@ -40,6 +43,7 @@ public class FQWhere: FQPart {
         return self
     }
     
+    @discardableResult
     public func or(_ inst: FQWhere)  -> Self {
         joinAnotherInstance(inst, by: "OR")
         return self
