@@ -276,12 +276,12 @@ public class FluentQuery: FQPart, CustomStringConvertible {
         return conn.query(query)
     }
     
-    public func execute<D, T>(on conn: D, andDecode to: T.Type) throws -> Future<[T]> where D: PostgreSQLConnection, T: Decodable {
-        return try execute(on: conn).decode(T.self)
+    public func execute<D, T>(on conn: D, andDecode to: T.Type, withDateDecodingStrategy strategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> Future<[T]> where D: PostgreSQLConnection, T: Decodable {
+        return try execute(on: conn).decode(T.self, dateDecodingStrategy: strategy)
     }
     
-    public func execute<D, T>(on conn: D, andDecode to: [T].Type) throws -> Future<[T]> where D: PostgreSQLConnection, T: Decodable {
-        return try execute(on: conn).decode(T.self)
+    public func execute<D, T>(on conn: D, andDecode to: [T].Type, withDateDecodingStrategy strategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> Future<[T]> where D: PostgreSQLConnection, T: Decodable {
+        return try execute(on: conn).decode(T.self, dateDecodingStrategy: strategy)
     }
     
     public var description: String {

@@ -2,28 +2,27 @@ import Foundation
 import FluentPostgreSQL
 import PostgreSQL
 
-public protocol FQDecodable: Codable, PostgreSQLJSONCustomConvertible {}
 extension EventLoopFuture where T == [[PostgreSQL.PostgreSQLColumn: PostgreSQLData]] {
-    public func decode<T>(_ to: T.Type) throws -> EventLoopFuture<[T]> where T: Decodable {
-        return map { return try $0.decode(T.self) }
+    public func decode<T>(_ to: T.Type, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> EventLoopFuture<[T]> where T: Decodable {
+        return map { return try $0.decode(T.self, dateDecodingStrategy: dateDecodingStrategy) }
     }
 }
 
 extension Array where Element == [PostgreSQL.PostgreSQLColumn: PostgreSQL.PostgreSQLData] {
-    public func decode<T>(_ to: T.Type) throws -> [T] where T: Decodable {
-        return try map { try $0.decode(T.self) }
+    public func decode<T>(_ to: T.Type, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> [T] where T: Decodable {
+        return try map { try $0.decode(T.self, dateDecodingStrategy: dateDecodingStrategy) }
     }
 }
 
 extension Dictionary where Key == PostgreSQL.PostgreSQLColumn, Value == PostgreSQL.PostgreSQLData {
-    public func decode<T>(_ to: [T.Type]) throws -> T where T: Decodable {
-        return try decode(T.self)
+    public func decode<T>(_ to: [T.Type], dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> T where T: Decodable {
+        return try decode(T.self, dateDecodingStrategy: dateDecodingStrategy)
     }
     
-    public func decode<T>(_ to: T.Type) throws -> T where T: Decodable {
+    public func decode<T>(_ to: T.Type, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> T where T: Decodable {
         let convertedRowValues = map { (QueryField(name: $0.name), $1) }
         let convertedRow = Dictionary<QueryField, PostgreSQL.PostgreSQLData>(uniqueKeysWithValues: convertedRowValues)
-        return try FQDataDecoder(PostgreSQLDatabase.self).decode(to, from: convertedRow)
+        return try FQDataDecoder(PostgreSQLDatabase.self, entity: nil, dateDecodingStrategy: dateDecodingStrategy).decode(to, from: convertedRow)
     }
 }
 
@@ -33,11 +32,13 @@ extension Dictionary where Key == PostgreSQL.PostgreSQLColumn, Value == PostgreS
 
 public final class FQDataDecoder<Database> where Database: QuerySupporting {
     var entity: String?
-    public init(_ database: Database.Type, entity: String? = nil) {
+    var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy?
+    public init(_ database: Database.Type, entity: String? = nil, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil) {
         self.entity = entity
+        self.dateDecodingStrategy = dateDecodingStrategy
     }
     public func decode<D>(_ type: D.Type, from data: [QueryField: Database.QueryData]) throws -> D where D: Decodable {
-        let decoder = _QueryDataDecoder<Database>(data: data, entity: entity)
+        let decoder = _QueryDataDecoder<Database>(data: data, entity: entity, dateDecodingStrategy: dateDecodingStrategy)
         return try D.init(from: decoder)
     }
 }
@@ -49,13 +50,15 @@ fileprivate final class _QueryDataDecoder<Database>: Decoder where Database: Que
     var userInfo: [CodingUserInfoKey: Any] { return [:] }
     var data: [QueryField: Database.QueryData]
     var entity: String?
-    init(data: [QueryField: Database.QueryData], entity: String?) {
+    var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy?
+    init(data: [QueryField: Database.QueryData], entity: String?, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil) {
         self.data = data
         self.entity = entity
+        self.dateDecodingStrategy = dateDecodingStrategy
     }
     
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
-        return KeyedDecodingContainer(_QueryDataKeyedDecoder<Key, Database>(decoder: self, entity: entity))
+        return KeyedDecodingContainer(_QueryDataKeyedDecoder<Key, Database>(decoder: self, entity: entity, dateDecodingStrategy: dateDecodingStrategy))
     }
     
     func unkeyedContainer() throws -> UnkeyedDecodingContainer { throw unsupported() }
@@ -83,9 +86,17 @@ fileprivate struct _QueryDataKeyedDecoder<K, Database>: KeyedDecodingContainerPr
     var codingPath: [CodingKey] { return [] }
     let decoder: _QueryDataDecoder<Database>
     var entity: String?
-    init(decoder: _QueryDataDecoder<Database>, entity: String?) {
+    var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy
+    init(decoder: _QueryDataDecoder<Database>, entity: String?, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil) {
         self.decoder = decoder
         self.entity = entity
+        if let dateDecodingStrategy = dateDecodingStrategy {
+            self.dateDecodingStrategy = dateDecodingStrategy
+        } else {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+            self.dateDecodingStrategy = .formatted(formatter)
+        }
     }
     
     func _value(forEntity entity: String?, atField field: String) -> Database.QueryData? {
@@ -95,11 +106,23 @@ fileprivate struct _QueryDataKeyedDecoder<K, Database>: KeyedDecodingContainerPr
         return decoder.data.value(forEntity: entity, atField: field) ?? decoder.data.firstValue(forField: field)
     }
     
-    func _parse<T>(_ type: T.Type, forKey key: K) throws -> T? {
+    func _parse<T>(_ type: T.Type, forKey key: K) throws -> T? where T: Decodable {
         guard let data = _value(forEntity: entity, atField: key.stringValue)  else {
             return nil
         }
-        
+        if let data = data as? PostgreSQLData {
+            if type is Decodable.Type {
+                if let data = data.data {
+                    let decoder = JSONDecoder()
+                    decoder.dateDecodingStrategy = dateDecodingStrategy
+                    return try? decoder.decode(T.self, from: data[1...])
+                } else {
+                    return nil
+                }
+            } else {
+                throw FluentError(identifier: "decodingError", reason: "\(type) should conform to Decodable protocol", source: .capture())
+            }
+        }
         return try Database.queryDataParse(T.self, from: data)
     }
     
