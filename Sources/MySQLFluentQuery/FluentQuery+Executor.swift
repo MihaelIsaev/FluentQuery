@@ -6,13 +6,13 @@ extension FluentQuery {
         return conn.query(self.query, [])
     }
     
-    public func execute<D, T>(on conn: D, andDecode to: T.Type, withDateDecodingStrategy strategy: JSONDecoder.DateDecodingStrategy? = nil)throws -> Future<[T]>
+    public func execute<D, T>(on conn: D, andDecode to: T.Type)throws -> Future<[T]>
         where D: MySQLConnection, T: Decodable {
-            return try conn.query(self.query, []).decode(T.self, dateDecodingStrategy: strategy)
+            return try conn.query(self.query, []).decode(T.self)
     }
     
-    public func execute<D, T>(on conn: D, andDecode to: [T].Type, withDateDecodingStrategy strategy: JSONDecoder.DateDecodingStrategy? = nil)throws -> Future<[T]>
+    public func execute<D, T>(on conn: D, andDecode to: [T].Type)throws -> Future<[T]>
         where D: MySQLConnection, T: Decodable {
-            return try conn.query(self.query, []).decode(T.self, dateDecodingStrategy: strategy)
+            return try conn.query(self.query, []).decode(T.self)
     }
 }
