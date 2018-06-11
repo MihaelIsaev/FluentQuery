@@ -25,3 +25,10 @@ extension Dictionary where Key == MySQL.MySQLColumn, Value == MySQL.MySQLData {
         return try FQDataDecoder(MySQLDatabase.self, entity: nil, dateDecodingStrategy: nil).decode(to, from: convertedRow)
     }
 }
+
+extension MySQLData: JSONFieldSupporting {
+    public var json: Data? {
+        guard self.type.raw == MySQLDataType.MYSQL_TYPE_JSON.raw else { return nil }
+        return self.data()
+    }
+}
