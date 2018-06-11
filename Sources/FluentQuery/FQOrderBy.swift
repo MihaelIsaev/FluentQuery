@@ -16,6 +16,11 @@ public class FQOrderBy: FQPart {
             self.mode = mode
         }
         
+        public init(_ rawKP: String, _ mode: Mode) {
+            self.path = rawKP
+            self.mode = mode
+        }
+        
         public var query: String {
             return "\(path) \(mode.rawValue)"
         }
@@ -42,6 +47,23 @@ public class FQOrderBy: FQPart {
     @discardableResult
     public func and<T>(_ kp: T, _ mode: Mode) -> Self where T: FQUniversalKeyPath {
         return add(kp, mode)
+    }
+    
+    //MARK: Allow to use raw keypaths
+    
+    public init(_ rawKP: String, _ mode: Mode) {
+        add(rawKP, mode)
+    }
+    
+    @discardableResult
+    public func add(_ rawKP: String, _ mode: Mode) -> Self {
+        parts.append(Data(rawKP, mode))
+        return self
+    }
+    
+    @discardableResult
+    public func and(_ rawKP: String, _ mode: Mode) -> Self {
+        return add(rawKP, mode)
     }
     
     public var query: String {
