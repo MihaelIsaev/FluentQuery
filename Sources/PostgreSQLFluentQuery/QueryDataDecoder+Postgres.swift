@@ -25,8 +25,9 @@ extension Dictionary where Key == PostgreSQL.PostgreSQLColumn, Value == PostgreS
     }
 }
 
-extension PostgreSQLDatabase.QueryData: RawDataContainer {
-    public var raw: Data? {
+extension PostgreSQLData: JSONFieldSupporting {
+    public var json: Data? {
+        guard self.type == .jsonb || self.type == ._jsonb || self.type == .json else { return nil }
         return self.data
     }
 }

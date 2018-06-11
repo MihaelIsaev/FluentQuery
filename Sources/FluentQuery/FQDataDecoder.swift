@@ -85,8 +85,7 @@ fileprivate struct _QueryDataKeyedDecoder<K, Database>: KeyedDecodingContainerPr
         guard let data = _value(forEntity: entity, atField: key.stringValue)  else {
             return nil
         }
-        
-        if let data = (data as? RawDataContainer)?.raw {
+        if let data = (data as? JSONFieldSupporting)?.json {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = dateDecodingStrategy
             do {
@@ -95,7 +94,6 @@ fileprivate struct _QueryDataKeyedDecoder<K, Database>: KeyedDecodingContainerPr
                 throw FluentError(identifier: "decodingError", reason: "\(error.localizedDescription) (\(type) nested model)", source: .capture())
             }
         }
-        
         return try Database.queryDataParse(T.self, from: data)
     }
     
@@ -130,6 +128,6 @@ fileprivate struct _QueryDataKeyedDecoder<K, Database>: KeyedDecodingContainerPr
     func superDecoder(forKey key: K) throws -> Decoder { return decoder }
 }
 
-public protocol RawDataContainer {
-    var raw: Data? { get }
+public protocol JSONFieldSupporting {
+    var json: Data? { get }
 }
