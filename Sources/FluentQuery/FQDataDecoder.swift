@@ -110,7 +110,7 @@ fileprivate struct _QueryDataKeyedDecoder<K, Database>: KeyedDecodingContainerPr
         guard let data = _value(forEntity: entity, atField: key.stringValue)  else {
             return nil
         }
-        if let data = data as? PostgreSQLData {
+        if let data = data as? PostgreSQLData, data.type == .jsonb {
             if let data = data.data {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = dateDecodingStrategy
