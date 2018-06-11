@@ -110,25 +110,25 @@ final class Car: Model {
 }
 ```
 and related models
-**PLEASE NOTE: nested models should conform to `FQDecodable` protocol**
+
 ```swift
-final class Brand: Model, FQDecodable {
+final class Brand: Decodable {
   var id: UUID?
   var value: String
 }
-final class Model: Model, FQDecodable {
+final class Model: Decodable {
   var id: UUID?
   var value: String
 }
-final class BodyType: Model, FQDecodable {
+final class BodyType: Decodable {
   var id: UUID?
   var value: String
 }
-final class EngineType: Model, FQDecodable {
+final class EngineType: Decodable {
   var id: UUID?
   var value: String
 }
-final class GearboxType: Model, FQDecodable {
+final class GearboxType: Decodable {
   var id: UUID?
   var value: String
 }
@@ -434,3 +434,44 @@ aliasModel.k(\.value)
 aliasEngineType.k(\.id)
 aliasEngineType.k(\.value)
 ```
+
+### Executing query
+
+`.execute(on: PostgreSQLConnection)`
+
+```swift
+try FluentQuery().select(all: User.self).execute(on: conn)
+```
+
+### Decoding query
+
+`.decode(Decodable.Type, dateDecodingstrategy: JSONDecoder.DateDecodingStrategy?)`
+
+```swift
+try FluentQuery().select(all: User.self).execute(on: conn).decode(PublicUser.self)
+```
+
+by default date decoding strategy is `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'` which is compatible with postgres `timestamp`
+
+but you can specify custom DateDecodingStrategy like this
+
+```swift
+try FluentQuery().select(all: User.self).execute(on: conn).decode(PublicUser.self, dateDecodingStrategy: .secondsSince1970)
+```
+
+or like this
+
+```swift
+let formatter = DateFormatter()
+formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+try FluentQuery().select(all: User.self).execute(on: conn).decode(PublicUser.self, dateDecodingStrategy: .formatted(formatter))
+```
+
+
+### Conslusion
+
+I hope that it'll be useful for someone.
+
+Feedback is really appreciated!
+
+And don't hesitate to asking me questions, I'm ready to help in [Vapor's discord chat](http://vapor.team) find me by @iMike nickname.
