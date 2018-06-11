@@ -114,18 +114,18 @@ public class FQPredicate<T>: FQPart, FQPredicateGenericType  where T: FQUniversa
             formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
             return String.singleQuotted(formatter.string(from: date))
         } else { fallthrough }
-        case is Int: fallthrough
-        case is Int8: fallthrough
-        case is Int16: fallthrough
-        case is Int32: fallthrough
-        case is Int64: fallthrough
-        case is UInt: fallthrough
-        case is UInt8: fallthrough
-        case is UInt16: fallthrough
-        case is UInt32: fallthrough
-        case is UInt64: fallthrough
-        case is Float: fallthrough
-        case is Double: return "\(v)"
+        case is Int: if let v = v as? Int { return "\(v)" } else { fallthrough }
+        case is Int8: if let v = v as? Int8 { return "\(v)" } else { fallthrough }
+        case is Int16: if let v = v as? Int16 { return "\(v)" } else { fallthrough }
+        case is Int32: if let v = v as? Int32 { return "\(v)" } else { fallthrough }
+        case is Int64: if let v = v as? Int64 { return "\(v)" } else { fallthrough }
+        case is UInt: if let v = v as? UInt { return "\(v)" } else { fallthrough }
+        case is UInt8: if let v = v as? UInt8 { return "\(v)" } else { fallthrough }
+        case is UInt16: if let v = v as? UInt16 { return "\(v)" } else { fallthrough }
+        case is UInt32: if let v = v as? UInt32 { return "\(v)" } else { fallthrough }
+        case is UInt64: if let v = v as? UInt64 { return "\(v)" } else { fallthrough }
+        case is Float: if let v = v as? Float { return "\(v)" } else { fallthrough }
+        case is Double: if let v = v as? Double { return "\(v)" } else { fallthrough }
         default: return "\(v)"
         }
     }
