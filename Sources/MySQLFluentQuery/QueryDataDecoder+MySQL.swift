@@ -28,7 +28,7 @@ extension Dictionary where Key == MySQL.MySQLColumn, Value == MySQL.MySQLData {
 
 extension MySQLData: JSONFieldSupporting {
     public var json: Data? {
-        guard self.type.raw == MySQLDataType.MYSQL_TYPE_JSON.raw else { return nil }
+        guard self.type == .MYSQL_TYPE_JSON else { return nil }
         return self.data()
     }
 }
