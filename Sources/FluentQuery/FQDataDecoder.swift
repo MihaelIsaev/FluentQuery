@@ -111,16 +111,16 @@ fileprivate struct _QueryDataKeyedDecoder<K, Database>: KeyedDecodingContainerPr
             return nil
         }
         if let data = data as? PostgreSQLData {
-            if type is Decodable.Type {
-                if let data = data.data {
-                    let decoder = JSONDecoder()
-                    decoder.dateDecodingStrategy = dateDecodingStrategy
-                    return try? decoder.decode(T.self, from: data[1...])
-                } else {
-                    return nil
+            if let data = data.data {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = dateDecodingStrategy
+                do {
+                    return try decoder.decode(T.self, from: data[1...])
+                } catch {
+                    throw FluentError(identifier: "decodingError", reason: "\(error.localizedDescription) (\(type) nested model)", source: .capture())
                 }
             } else {
-                throw FluentError(identifier: "decodingError", reason: "\(type) should conform to Decodable protocol", source: .capture())
+                return nil
             }
         }
         return try Database.queryDataParse(T.self, from: data)
