@@ -1,6 +1,4 @@
 import Foundation
-import FluentPostgreSQL
-import FluentMySQL
 import Fluent
 
 public enum FluentQueryPredicateOperator: String {
@@ -270,34 +268,6 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     
     public func build() -> String {
         return query
-    }
-    
-    // MARK: - Postgres Query Executors
-    public func execute<D>(on conn: D) -> Future<[[PostgreSQL.PostgreSQLColumn: PostgreSQLData]]> where D: PostgreSQLConnection {
-        return conn.query(query)
-    }
-    
-    public func execute<D, T>(on conn: D, andDecode to: T.Type, withDateDecodingStrategy strategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> Future<[T]> where D: PostgreSQLConnection, T: Decodable {
-        return try execute(on: conn).decode(T.self, dateDecodingStrategy: strategy)
-    }
-    
-    public func execute<D, T>(on conn: D, andDecode to: [T].Type, withDateDecodingStrategy strategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> Future<[T]> where D: PostgreSQLConnection, T: Decodable {
-        return try execute(on: conn).decode(T.self, dateDecodingStrategy: strategy)
-    }
-    
-    // MARK: - MySQL Query Executors
-    public func execute<D>(on conn: D, _ parameters: [MySQLDataConvertible] = []) -> Future<[[MySQLColumn : MySQLData]]> where D: MySQLConnection {
-        return conn.query(self.query, parameters)
-    }
-    
-    public func execute<D, T>(on conn: D, _ parameters: [MySQLDataConvertible] = [], andDecode to: T.Type, withDateDecodingStrategy strategy: JSONDecoder.DateDecodingStrategy? = nil)throws -> Future<[T]>
-        where D: MySQLConnection, T: Decodable {
-        return try conn.query(self.query, parameters).decode(T.self, dateDecodingStrategy: strategy)
-    }
-    
-    public func execute<D, T>(on conn: D, _ parameters: [MySQLDataConvertible] = [], andDecode to: [T].Type, withDateDecodingStrategy strategy: JSONDecoder.DateDecodingStrategy? = nil)throws -> Future<[T]>
-        where D: MySQLConnection, T: Decodable {
-            return try conn.query(self.query, parameters).decode(T.self, dateDecodingStrategy: strategy)
     }
     
     public var description: String {
