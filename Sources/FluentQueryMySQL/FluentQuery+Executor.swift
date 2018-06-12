@@ -1,4 +1,4 @@
-import FluentMySQL
+@_exported import FluentMySQL
 @_exported import FluentQuery
 
 extension FluentQuery {

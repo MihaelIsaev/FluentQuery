@@ -1,4 +1,4 @@
-import FluentPostgreSQL
+@_exported import FluentPostgreSQL
 @_exported import FluentQuery
 
 extension FluentQuery {
