@@ -1,30 +1,5 @@
 import Foundation
-import FluentPostgreSQL
-import PostgreSQL
-
-extension EventLoopFuture where T == [[PostgreSQL.PostgreSQLColumn: PostgreSQLData]] {
-    public func decode<T>(_ to: T.Type, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> EventLoopFuture<[T]> where T: Decodable {
-        return map { return try $0.decode(T.self, dateDecodingStrategy: dateDecodingStrategy) }
-    }
-}
-
-extension Array where Element == [PostgreSQL.PostgreSQLColumn: PostgreSQL.PostgreSQLData] {
-    public func decode<T>(_ to: T.Type, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> [T] where T: Decodable {
-        return try map { try $0.decode(T.self, dateDecodingStrategy: dateDecodingStrategy) }
-    }
-}
-
-extension Dictionary where Key == PostgreSQL.PostgreSQLColumn, Value == PostgreSQL.PostgreSQLData {
-    public func decode<T>(_ to: [T.Type], dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> T where T: Decodable {
-        return try decode(T.self, dateDecodingStrategy: dateDecodingStrategy)
-    }
-    
-    public func decode<T>(_ to: T.Type, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> T where T: Decodable {
-        let convertedRowValues = map { (QueryField(name: $0.name), $1) }
-        let convertedRow = Dictionary<QueryField, PostgreSQL.PostgreSQLData>(uniqueKeysWithValues: convertedRowValues)
-        return try FQDataDecoder(PostgreSQLDatabase.self, entity: nil, dateDecodingStrategy: dateDecodingStrategy).decode(to, from: convertedRow)
-    }
-}
+import Fluent
 
 // Renamed decoder from Fluent repo
 // copied it just to make it public to start using it
@@ -110,17 +85,13 @@ fileprivate struct _QueryDataKeyedDecoder<K, Database>: KeyedDecodingContainerPr
         guard let data = _value(forEntity: entity, atField: key.stringValue)  else {
             return nil
         }
-        if let data = data as? PostgreSQLData, data.type == .jsonb {
-            if let data = data.data {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = dateDecodingStrategy
-                do {
-                    return try decoder.decode(T.self, from: data[1...])
-                } catch {
-                    throw FluentError(identifier: "decodingError", reason: "\(error.localizedDescription) (\(type) nested model)", source: .capture())
-                }
-            } else {
-                return nil
+        if let data = (data as? JSONFieldSupporting)?.json {
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = dateDecodingStrategy
+            do {
+                return try decoder.decode(T.self, from: data[1...])
+            } catch {
+                throw FluentError(identifier: "decodingError", reason: "\(error.localizedDescription) (\(type) nested model)", source: .capture())
             }
         }
         return try Database.queryDataParse(T.self, from: data)
@@ -157,4 +128,6 @@ fileprivate struct _QueryDataKeyedDecoder<K, Database>: KeyedDecodingContainerPr
     func superDecoder(forKey key: K) throws -> Decoder { return decoder }
 }
 
-
+public protocol JSONFieldSupporting {
+    var json: Data? { get }
+}
