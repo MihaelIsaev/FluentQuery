@@ -8,8 +8,8 @@ let package = Package(
     products: [
         // Swift lib that gives ability to build complex raw SQL-queries in a more easy way using KeyPaths
         .library(name: "FluentQuery", targets: ["FluentQuery"]),
-        .library(name: "PostgreSQLFluentQuery", targets: ["FluentQuery", "PostgreSQLFluentQuery"]),
-        .library(name: "MySQLFluentQuery", targets: ["FluentQuery", "MySQLFluentQuery"]),
+        .library(name: "FluentQueryPostgreSQL", targets: ["FluentQuery", "FluentQueryPostgreSQL"]),
+        .library(name: "FluentQueryMySQL", targets: ["FluentQuery", "FluentQueryMySQL"]),
     ],
     dependencies: [
         // Swift ORM framework (queries, models, and relations) for building NoSQL and SQL database integrations.
@@ -19,8 +19,8 @@ let package = Package(
     ],
     targets: [
         .target(name: "FluentQuery", dependencies: ["Fluent"]),
-        .target(name: "PostgreSQLFluentQuery", dependencies: ["FluentPostgreSQL", "FluentQuery"]),
-        .target(name: "MySQLFluentQuery", dependencies: ["FluentMySQL", "FluentQuery"]),
+        .target(name: "FluentQueryPostgreSQL", dependencies: ["FluentPostgreSQL", "FluentQuery"]),
+        .target(name: "FluentQueryMySQL", dependencies: ["FluentMySQL", "FluentQuery"]),
         .testTarget(name: "FluentQueryTests", dependencies: ["FluentQuery", "FluentPostgreSQL", "FluentMySQL"]),
     ]
 )
