@@ -115,6 +115,7 @@ extension FQJSON {
         typealias KPAndWheres = (kp: String, wheres: String)
         
         case row(String) //m
+        case rows(String) //m
         case extractEpochFromTime(String) //kp
         case count(String) //kp
         case countWhere(String, String) //kp, w
@@ -125,6 +126,8 @@ extension FQJSON {
             switch self {
             case .row:
                 description = "SELECT to_jsonb(%)"
+            case .rows:
+                description = "SELECT json_agg(row(%))"
             case .extractEpochFromTime:
                 description = "extract(epoch from %)"
             case .count:
@@ -142,6 +145,7 @@ extension FQJSON {
             let whereKey = "$"
             switch self {
             case .row: fallthrough
+            case .rows: fallthrough
             case .extractEpochFromTime: fallthrough
             case .count:
                 return description.replacingOccurrences(of: valueKey, with: "\(value)")
@@ -160,6 +164,8 @@ extension FQJSON {
             let value: Any
             switch self {
             case let .row(b):
+                value = b
+            case let .rows(b):
                 value = b
             case let .extractEpochFromTime(t):
                 value = t
@@ -251,11 +257,13 @@ extension FQJSON {
     //MARK: Mirror for ModelAlias only based functions
     public enum FunctionWithModelAlias<T>: FQJSONFuncOption where T: Model {
         case row(FQAlias<T>)
+        case rows(FQAlias<T>)
         case none()
         
         var mirror: Functions {
             switch self {
             case .row(let v): return .row("\(v.alias.doubleQuotted)")
+            case .rows(let v): return .rows("\(v.alias.doubleQuotted)")
             case .none: return .empty()
             }
         }
@@ -280,11 +288,13 @@ extension FQJSON {
     //MARK: Mirror for Model only based functions
     public enum FunctionWithModel<T>: FQJSONFuncOption where T: Model {
         case row(T.Type)
+        case rows(T.Type)
         case none()
         
         var mirror: Functions {
             switch self {
             case .row: return .row("\(T.FQType.alias.doubleQuotted)")
+            case .rows: return .rows("\(T.FQType.alias.doubleQuotted)")
             case .none: return .empty()
             }
         }
