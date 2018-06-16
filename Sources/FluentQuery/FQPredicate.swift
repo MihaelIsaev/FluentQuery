@@ -108,7 +108,7 @@ public class FQPredicate<T>: FQPart, FQPredicateGenericType  where T: FQUniversa
             }
             return String.singleQuotted(v)
         case is UUID: if let v = v as? UUID { return v.uuidString.singleQuotted } else { fallthrough }
-        case is Bool: if let v = v as? Bool { return "\(v ? 1 : 0)" } else { fallthrough }
+        case is Bool: if let v = v as? Bool { return v ? "TRUE" : "FALSE" } else { fallthrough }
         case is Date: if let date = v as? Date {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
