@@ -273,7 +273,7 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     }
     
     public func execute<D>(on conn: D) -> Future<[[PostgreSQL.PostgreSQLColumn: PostgreSQLData]]> where D: PostgreSQLConnection {
-        return conn.query(PostgreSQLQuery.raw(query: query, binds: []))
+        return conn.query(PostgreSQLQuery.raw(query, binds: []))
     }
     
     public func execute<D, T>(on conn: D, andDecode to: T.Type, withDateDecodingStrategy strategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> Future<[T]> where D: PostgreSQLConnection, T: Decodable {
