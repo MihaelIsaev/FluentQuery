@@ -19,6 +19,7 @@ public enum FluentQueryPredicateOperator: String {
     case notILike = "NOT ILIKE"
     case isNull = "IS NULL"
     case isNotNull = "IS NOT NULL"
+    case inFulltext = "@@"
 }
 
 public class FluentQuery: FQPart, CustomStringConvertible {

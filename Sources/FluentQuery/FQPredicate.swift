@@ -151,6 +151,9 @@ public class FQPredicate<T>: FQPart, FQPredicateGenericType  where T: FQUniversa
         case .arrayOfOptionals(let v):
             result.append( v.map { "\(formatValue($0))" }.joined(separator: ",").roundBracketted )
         case .arrayOfAny(let v):
+            if operation == .inFulltext {
+                result.append("to_tsquery")
+            }
             result.append( v.map { "\(formatValue($0))" }.joined(separator: ",").roundBracketted )
         case .string(let v):
             result.append(formatValue(v))
@@ -319,6 +322,11 @@ public func ~~ <M, K>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: [K]) -> FQPr
 }
 public func ~~ <M>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: FluentQuery) -> FQPredicateGenericType where M: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .in, value: .string(rhs.query.roundBracketted))
+}
+// FULLTEXT SEARCH
+infix operator ~~~
+public func ~~~ <T>(lhs: T, rhs: [T.AType]) -> FQPredicateGenericType where T: FQUniversalKeyPath {
+    return FQPredicate(kp: lhs, operation: .inFulltext, value: .arrayOfAny(rhs))
 }
 
 // NOT IN
