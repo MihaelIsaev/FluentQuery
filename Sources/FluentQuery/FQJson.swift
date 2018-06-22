@@ -127,7 +127,7 @@ extension FQJSON {
             case .row:
                 description = "SELECT to_jsonb(%)"
             case .rows:
-                description = "SELECT json_agg(row(%))"
+                description = "SELECT COALESCE(NULLIF(jsonb_agg(%)::TEXT, '[null]'), '[]')::JSONB"
             case .extractEpochFromTime:
                 description = "extract(epoch from %)"
             case .count:
