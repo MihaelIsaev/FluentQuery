@@ -33,6 +33,16 @@ public class FQJSON: FQPart {
         fields.append("\(key.singleQuotted), \(value.singleQuotted)")
         return self
     }
+    
+    @discardableResult
+    public func field(_ key: String, _ value: Int) -> Self {
+        fields.append("\(key.singleQuotted), \(String(describing: value))")
+        return self
+    }
+    
+    @discardableResult
+    public func field(_ key: String, _ value: Bool) -> Self {
+        fields.append("\(key.singleQuotted), \(String(describing: value))")
         return self
     }
     
