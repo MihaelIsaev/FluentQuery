@@ -170,6 +170,12 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     }
     
     @discardableResult
+    public func join<T>(_ mode: FQJoinMode, subquery: FluentQuery, alias: FQAlias<T>, where: FQWhere) -> Self where T: Model {
+        joins.append(FQJoin(mode, subquery: subquery, alias: alias, where: `where`))
+        return self
+    }
+    
+    @discardableResult
     public func `where`(_ where: FQWhere) -> Self {
         if let w = self.`where` {
             w.joinAnotherInstance(`where`, by: "AND")
