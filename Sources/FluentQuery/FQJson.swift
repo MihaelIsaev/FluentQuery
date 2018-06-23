@@ -53,6 +53,18 @@ public class FQJSON: FQPart {
     }
     
     @discardableResult
+    public func field<T>(_ key: String, _ value: FQPart, checkIfModelNull: FQTable<T>.Type) -> Self where T: Model {
+        fields.append("\(key.singleQuotted), CASE WHEN \(checkIfModelNull.alias.doubleQuotted) IS NULL THEN NULL ELSE \(value.query) END")
+        return self
+    }
+    
+    @discardableResult
+    public func field<T>(_ key: String, _ value: FQPart, checkIfModelNull: FQAlias<T>) -> Self where T: Model {
+        fields.append("\(key.singleQuotted), CASE WHEN \(checkIfModelNull.alias.doubleQuotted) IS NULL THEN NULL ELSE \(value.query) END")
+        return self
+    }
+    
+    @discardableResult
     public func field<T, V>(_ key: String, _ kp: KeyPath<T, V>) -> Self where T: Model {
         return field(key, T.FQType.self, kp)
     }
