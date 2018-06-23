@@ -85,6 +85,12 @@ public class FQSelect: FQPart {
         return self
     }
     
+    @discardableResult
+    public func `func`<T>(_ func: FQJSON.FunctionWithSubquery<T>, as: String? = nil) -> Self where T: FQPart {
+        _append(`func`.func.roundBracketted, `as`)
+        return self
+    }
+    
     private func _append(_ field: String, _ as: String? = nil) {
         var string = "\(field)"
         if let `as` = `as` {

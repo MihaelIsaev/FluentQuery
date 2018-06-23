@@ -80,6 +80,10 @@ public class FQJSON: FQPart {
     public func field<T>(_ key: String, func: FunctionWithModel<T>) -> Self where T: Model {
         return field(key, raw: `func`.func)
     }
+    @discardableResult
+    public func field<T>(_ key: String, func: FunctionWithSubquery<T>) -> Self where T: Model {
+        return field(key, raw: `func`.func)
+    }
     
     @discardableResult
     public func field<T, V>(_ key: String, _ kp: KeyPath<T, V>, func: String, valueKey: String = "%") -> Self where T: Model {
@@ -324,6 +328,37 @@ extension FQJSON {
         }
         
         public static func ==(lhs: FunctionWithModel, rhs: FunctionWithModel) -> Bool {
+            return lhs.func == rhs.func
+        }
+    }
+    
+    //MARK: Mirror for Model only based functions
+    public enum FunctionWithSubquery<T>: FQJSONFuncOption where T: FQPart {
+        case row(T)
+        case rows(T)
+        case none()
+        
+        var mirror: Functions {
+            switch self {
+            case .row(let v): return .row("\(v.query.roundBracketted)")
+            case .rows(let v): return .rows("\(v.query.roundBracketted)")
+            case .none: return .empty()
+            }
+        }
+        
+        public var description: String {
+            return mirror.description
+        }
+        
+        var `func`: String {
+            return mirror.func
+        }
+        
+        var value: Any {
+            return mirror.value
+        }
+        
+        public static func ==(lhs: FunctionWithSubquery, rhs: FunctionWithSubquery) -> Bool {
             return lhs.func == rhs.func
         }
     }
