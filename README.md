@@ -320,28 +320,29 @@ FQWhere(\Car.engineCapacity > 1.6).and(FQWhere(\Brand.value ~~ "YO").or(\Brand.v
 ```
 
 ##### Cheatsheet
-| Operator  | SQL equivalent |
-| -- | --- |
-| == | == / IS |
-| != | != / IS NOT|
-| > | > |
-| < | < |
-| >= | >= |
-| <= | <= |
-| ~~ | IN () |
-| !~ | NOT IN () |
-| ~= | LIKE '%str' |
-| ~~ | LIKE '%str%' |
-| =~ | LIKE 'str%' |
-| ~% | ILIKE '%str' |
-| %% | ILIKE '%str%' |
-| %~ | ILIKE 'str%' |
-| !~= | NOT LIKE '%str' |
-| !~~ | NOT LIKE '%str%' |
-| !=~ | NOT LIKE 'str%' |
-| !~% | NOT ILIKE '%str' |
-| !%% | NOT ILIKE '%str%' |
-| !%~ | NOT ILIKE 'str%' |
+| Operator  | SQL equivalent | Description |
+| -- | --- | --- |
+| == | == / IS | Equals |
+| != | != / IS NOT| Not equals |
+| > | > | Greater than |
+| < | < | Less than |
+| >= | >= | Greater or equal |
+| <= | <= | Less or equal |
+| ~~ | IN () | In array |
+| !~ | NOT IN () | Not in array |
+| ~= | LIKE '%str' | Case sensitive text search |
+| ~~ | LIKE '%str%' | |
+| =~ | LIKE 'str%' | |
+| ~% | ILIKE '%str' | Case insensitive text search |
+| %% | ILIKE '%str%' | |
+| %~ | ILIKE 'str%' | |
+| !~= | NOT LIKE '%str' | Case sensitive text search where text not like string |
+| !~~ | NOT LIKE '%str%' | |
+| !=~ | NOT LIKE 'str%' | |
+| !~% | NOT ILIKE '%str' | Case insensitive text search where text not like string |
+| !%% | NOT ILIKE '%str%' | |
+| !%~ | NOT ILIKE 'str%' | |
+| ~~~ | @@ 'str' | Full text search |
 
 #### Having
 
