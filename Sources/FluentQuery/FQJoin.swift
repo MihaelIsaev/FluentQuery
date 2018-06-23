@@ -23,12 +23,12 @@ public class FQJoin<T>: FQPart, FQJoinGenericType where T: Model {
         query = FQJoin.build(mode, table.query, `where`)
     }
     
-    static func build(_ mode: FQJoinMode,_ tableName: String, _ where: FQWhere) -> String {
+    static func build(_ mode: FQJoinMode,_ value: String, _ where: FQWhere) -> String {
         var result = mode.rawValue
         result.append(" ")
         result.append("JOIN")
         result.append(" ")
-        result.append("\(tableName)")
+        result.append("\(value)")
         result.append(" ")
         result.append("ON")
         result.append(" ")
