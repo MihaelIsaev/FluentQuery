@@ -27,7 +27,7 @@ public class FQAlias<M>: FQPart where M: Model {
     //MARK: SQLQueryPart
     
     public var query: String {
-        return "\(name.doubleQuotted) as \(alias.doubleQuotted)"
+        return name.doubleQuotted.as(alias.doubleQuotted)
     }
     
     public func k<V>(_ kp: KeyPath<M, V>) -> AliasedKeyPath<M, V> {
