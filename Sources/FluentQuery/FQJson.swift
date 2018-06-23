@@ -30,7 +30,9 @@ public class FQJSON: FQPart {
     
     @discardableResult
     public func field(_ key: String, _ value: String) -> Self {
-        fields.append("\(key.singleQuotted), \(value.doubleQuotted)")
+        fields.append("\(key.singleQuotted), \(value.singleQuotted)")
+        return self
+    }
         return self
     }
     
