@@ -74,6 +74,12 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     }
     
     @discardableResult
+    public func select<T>(all: FQAlias<T>) -> Self {
+        select.all(all)
+        return self
+    }
+    
+    @discardableResult
     public func select<T>(_ kp: T, as: String? = nil) -> Self where T: FQUniversalKeyPath {
         select.field(kp, as: `as`)
         return self
