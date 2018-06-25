@@ -216,6 +216,11 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     }
     
     @discardableResult
+    public func groupBy(_ keyPaths: FQUniversalKeyPathSimple...) -> Self {
+        return groupBy(FQGroupBy(keyPaths))
+    }
+    
+    @discardableResult
     public func groupBy(_ groupBy: FQGroupBy) -> Self {
         if let w = self.groupBy {
             w.joinAnotherInstance(groupBy)

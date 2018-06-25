@@ -4,6 +4,14 @@ import Fluent
 public class FQGroupBy: FQPart {
     var parts: [FQPart] = []
     
+    public init(_ keyPaths: FQUniversalKeyPathSimple...) {
+        parts = keyPaths.map { $0.queryValue }
+    }
+    
+    public init(_ keyPaths: [FQUniversalKeyPathSimple]) {
+        parts = keyPaths.map { $0.queryValue }
+    }
+    
     public init(copy from: FQGroupBy? = nil) {
         if let from = from {
             parts = from.parts.map { $0 }

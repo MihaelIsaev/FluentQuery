@@ -35,6 +35,10 @@ public class FQAlias<M>: FQPart where M: Model {
     }
 }
 
+public protocol FQUniversalKeyPathSimple {
+    var queryValue: String { get }
+}
+
 public protocol FQUniversalKeyPath {
     associatedtype AType
     associatedtype AModel: Model
@@ -44,7 +48,7 @@ public protocol FQUniversalKeyPath {
     var originalKeyPath: KeyPath<AModel, AType> { get }
 }
 
-extension KeyPath: FQUniversalKeyPath where Root: Model {
+extension KeyPath: FQUniversalKeyPath, FQUniversalKeyPathSimple  where Root: Model {
     public typealias AType = Value
     public typealias AModel = Root
     public typealias ARoot = KeyPath
@@ -58,7 +62,7 @@ extension KeyPath: FQUniversalKeyPath where Root: Model {
     }
 }
 
-extension AliasedKeyPath: FQUniversalKeyPath {
+extension AliasedKeyPath: FQUniversalKeyPath, FQUniversalKeyPathSimple {
     public typealias AType = V
     public typealias AModel = M
     public typealias ARoot = AliasedKeyPath
