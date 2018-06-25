@@ -330,7 +330,7 @@ public func <= <M, T>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: T) -> FQPred
 }
 
 // IN
-infix operator ~~
+infix operator ~~ : AdditionPrecedence
 public func ~~ <T>(lhs: T, rhs: [T.AType?]) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .in, value: .arrayOfOptionals(rhs))
 }
@@ -352,13 +352,13 @@ public func ~~ <M>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: FluentQuery) ->
     return FQPredicate(kp: lhs, operation: .in, value: .string(rhs.query.roundBracketted))
 }
 // FULLTEXT SEARCH
-infix operator ~~~
+infix operator ~~~ : AdditionPrecedence
 public func ~~~ <T>(lhs: T, rhs: [T.AType]) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .inFulltext, value: .arrayOfAny(rhs))
 }
 
 // NOT IN
-infix operator !~
+infix operator !~ : AdditionPrecedence
 public func !~ <T>(lhs: T, rhs: [T.AType?]) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .notIn, value: .arrayOfOptionals(rhs))
 }
@@ -381,14 +381,14 @@ public func !~ <M>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: FluentQuery) ->
 }
 
 // LIKE
-infix operator ~=
+infix operator ~= : AdditionPrecedence
 public func ~= <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .like, value: .string("%\(rhs)"))
 }
 public func ~= <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
     return FQPredicate(kp: lhs, operation: .like, value: .string("%\(rhs)"))
 }
-infix operator =~
+infix operator =~ : AdditionPrecedence
 public func =~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .like, value: .string("\(rhs)%"))
 }
@@ -403,21 +403,21 @@ public func ~~ <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUnive
 }
 
 // ILIKE
-infix operator ~%
+infix operator ~% : AdditionPrecedence
 public func ~% <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .ilike, value: .string("%\(rhs)"))
 }
 public func ~% <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
     return FQPredicate(kp: lhs, operation: .ilike, value: .string("%\(rhs)"))
 }
-infix operator %~
+infix operator %~ : AdditionPrecedence
 public func %~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .ilike, value: .string("\(rhs)%"))
 }
 public func %~ <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
     return FQPredicate(kp: lhs, operation: .ilike, value: .string("\(rhs)%"))
 }
-infix operator %%
+infix operator %% : AdditionPrecedence
 public func %% <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .ilike, value: .string("%\(rhs)%"))
 }
@@ -426,21 +426,21 @@ public func %% <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUnive
 }
 
 // NOT LIKE
-infix operator !~=
+infix operator !~= : AdditionPrecedence
 public func !~= <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .notLike, value: .string("%\(rhs)"))
 }
 public func !~= <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
     return FQPredicate(kp: lhs, operation: .notLike, value: .string("%\(rhs)"))
 }
-infix operator !=~
+infix operator !=~ : AdditionPrecedence
 public func !=~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .notLike, value: .string("\(rhs)%"))
 }
 public func !=~ <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
     return FQPredicate(kp: lhs, operation: .notLike, value: .string("\(rhs)%"))
 }
-infix operator !~~
+infix operator !~~ : AdditionPrecedence
 public func !~~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .notLike, value: .string("%\(rhs)%"))
 }
@@ -449,21 +449,21 @@ public func !~~ <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniv
 }
 
 // NOT ILIKE
-infix operator !~%
+infix operator !~% : AdditionPrecedence
 public func !~% <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .notILike, value: .string("%\(rhs)"))
 }
 public func !~% <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
     return FQPredicate(kp: lhs, operation: .notILike, value: .string("%\(rhs)"))
 }
-infix operator !%~
+infix operator !%~ : AdditionPrecedence
 public func !%~ <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .notILike, value: .string("\(rhs)%"))
 }
 public func !%~ <T, E>(lhs: T, rhs: E) -> FQPredicateGenericType where T: FQUniversalKeyPath, T.AType: Collection, T.AType.Element: StringProtocol {
     return FQPredicate(kp: lhs, operation: .notILike, value: .string("\(rhs)%"))
 }
-infix operator !%%
+infix operator !%% : AdditionPrecedence
 public func !%% <T>(lhs: T, rhs: T.AType) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .notILike, value: .string("%\(rhs)%"))
 }
