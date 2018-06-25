@@ -32,7 +32,7 @@ try FQL()
     .join(.left, Pet.self, where: FQWhere(\Pet.id == \User.idPet))
     .join(.left, PetType.self, where: FQWhere(\PetType.id == \Pet.idType))
     .join(.left, PetToy.self, where: FQWhere(\PetToy.idPet == \Pet.id))
-    .groupBy(FQGroupBy(\User.id).and(\Pet.id).and(\PetType.id).and(\PetToy.id))
+    .groupBy(\User.id, \Pet.id, \PetType.id, \PetToy.id)
     .execute(on: conn)
     .decode(PublicUser.self) // -> Future<[PublicUser]> 🔥🔥🔥
 ```
@@ -59,7 +59,7 @@ Edit your `Package.swift`
 
 ```swift
 //add this repo to dependencies
-.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.4.15")
+.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.4.16")
 //and don't forget about targets
 //"FluentQuery"
 ```
@@ -172,13 +172,7 @@ func getListOfCars(_ req: Request) throws -> Future<[PublicCar]> {
         .join(.left, BodyType.self, where: FQWhere(\BodyType.id == \Car.idBodyType))
         .join(.left, EngineType.self, where: FQWhere(\EngineType.id == \Car.idEngineType))
         .join(.left, GearboxType.self, where: FQWhere(\GearboxType.id == \Car.idGearboxType))
-        .groupBy(FQGroupBy(\Car.id)
-          .and(\Brand.id)
-          .and(\Model.id)
-          .and(\BodyType.id)
-          .and(\EngineType.id)
-          .and(\GearboxType.id)
-        )
+        .groupBy(\Car.id, \Brand.id, \Model.id, \BodyType.id, \EngineType.id, \GearboxType.id)
         .orderBy(FQOrderBy(\Brand.value, .ascending)
           .and(\Model.value, .ascending)
         )
@@ -360,7 +354,18 @@ About `FQWhere` you already read above, but as having calls after data aggregati
 #### Group by
 
 ```swift
+.groupBy(\Car.id, \Brand.id, \Model.id)
+```
+or
+```swift
 .groupBy(FQGroupBy(\Car.id).and(\Brand.id).and(\Model.id))
+```
+or
+```swift
+let groupBy = FQGroupBy(\Car.id)
+groupBy.and(\Brand.id)
+groupBy.and(\Model.id)
+.groupBy(groupBy)
 ```
 
 #### Order by
