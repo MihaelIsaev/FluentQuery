@@ -41,13 +41,13 @@ public class FluentQuery: FQPart, CustomStringConvertible {
             froms = from.froms.map { $0 }
             joins = from.joins.map { $0 }
             if let `where` = from.where {
-                self.where = FQWhere(copy: `where`)
+                self.where = FQWhere(`where`)
             }
             if let groupBy = groupBy {
                 self.groupBy = FQGroupBy(copy: groupBy)
             }
             if let having = from.having {
-                self.having = FQWhere(copy: having)
+                self.having = FQWhere(having)
             }
             if let orderBy = from.orderBy {
                 self.orderBy = FQOrderBy(copy: orderBy)

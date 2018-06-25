@@ -4,7 +4,7 @@ import Fluent
 public class FQWhere: FQPart {
     var wheres: [FQPart] = []
     
-    public init(copy from: FQWhere? = nil) {
+    public init(_ from: FQWhere? = nil) {
         if let from = from {
             wheres = from.wheres.map { $0 }
         }

@@ -166,6 +166,34 @@ public class FQPredicate<T>: FQPart, FQPredicateGenericType  where T: FQUniversa
     }
 }
 
+// AND
+public func && (lhs: FQPredicateGenericType, rhs: FQPredicateGenericType) -> FQWhere {
+    return FQWhere(lhs).and(rhs)
+}
+public func && (lhs: FQPredicateGenericType, rhs: FQWhere) -> FQWhere {
+    return FQWhere(lhs).and(rhs)
+}
+public func && (lhs: FQWhere, rhs: FQPredicateGenericType) -> FQWhere {
+    return lhs.and(rhs)
+}
+public func && (lhs: FQWhere, rhs: FQWhere) -> FQWhere {
+    return lhs.and(rhs)
+}
+
+// OR
+public func || (lhs: FQPredicateGenericType, rhs: FQPredicateGenericType) -> FQWhere {
+    return FQWhere(lhs).or(rhs)
+}
+public func || (lhs: FQPredicateGenericType, rhs: FQWhere) -> FQWhere {
+    return FQWhere(lhs).or(rhs)
+}
+public func || (lhs: FQWhere, rhs: FQPredicateGenericType) -> FQWhere {
+    return lhs.or(rhs)
+}
+public func || (lhs: FQWhere, rhs: FQWhere) -> FQWhere {
+    return lhs.or(rhs)
+}
+
 // ==
 public func == <T>(lhs: T, rhs:T.AType?) -> FQPredicateGenericType where T: FQUniversalKeyPath {
     return FQPredicate(kp: lhs, operation: .equal, value: .simpleOptional(rhs))
