@@ -241,6 +241,17 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     }
     
     @discardableResult
+    public func orderBy(_ enums: OrderByEnum...) -> Self {
+        let orderBy = FQOrderBy(enums)
+        if let w = self.orderBy {
+            w.joinAnotherInstance(orderBy)
+        } else {
+            self.orderBy = orderBy
+        }
+        return self
+    }
+    
+    @discardableResult
     public func offset(_ v: Int) -> Self {
         self.offset = v
         return self

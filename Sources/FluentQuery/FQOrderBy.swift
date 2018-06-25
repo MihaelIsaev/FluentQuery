@@ -15,7 +15,7 @@ public class FQOrderBy: FQPart {
         }
     }
     
-    public struct Data: FQPart {
+    public struct Data: FQPart, OrderByDataProtocol {
         var path: String
         var mode: Mode
         
@@ -34,7 +34,7 @@ public class FQOrderBy: FQPart {
         }
     }
     
-    var parts: [Data] = []
+    var parts: [OrderByDataProtocol] = []
     
     public init(copy from: FQOrderBy? = nil) {
         if let from = from {
@@ -46,6 +46,14 @@ public class FQOrderBy: FQPart {
         add(kp, mode)
     }
     
+    public init(_ enums: OrderByEnum...) {
+        parts.append(contentsOf: enums)
+    }
+    
+    public init(_ enums: [OrderByEnum]) {
+        parts.append(contentsOf: enums)
+    }
+    
     @discardableResult
     public func add<T>(_ kp: T, _ mode: Mode) -> Self where T: FQUniversalKeyPath {
         parts.append(Data(kp, mode))
@@ -53,8 +61,30 @@ public class FQOrderBy: FQPart {
     }
     
     @discardableResult
+    public func add(_ enums: OrderByEnum...) -> Self {
+        parts.append(contentsOf: enums)
+        return self
+    }
+    
+    @discardableResult
+    public func add(_ enums: [OrderByEnum]) -> Self {
+        parts.append(contentsOf: enums)
+        return self
+    }
+    
+    @discardableResult
     public func and<T>(_ kp: T, _ mode: Mode) -> Self where T: FQUniversalKeyPath {
         return add(kp, mode)
+    }
+    
+    @discardableResult
+    public func and(_ enums: OrderByEnum...) -> Self {
+        return add(enums)
+    }
+    
+    @discardableResult
+    public func and(_ enums: [OrderByEnum]) -> Self {
+        return add(enums)
     }
     
     //MARK: Allow to use raw keypaths
@@ -85,3 +115,26 @@ public class FQOrderBy: FQPart {
     }
 }
 
+protocol OrderByDataProtocol {
+    var query: String { get }
+}
+
+public enum OrderByEnum: CustomStringConvertible, Equatable, OrderByDataProtocol {
+    public static func == (lhs: OrderByEnum, rhs: OrderByEnum) -> Bool {
+        return lhs.description == rhs.description
+    }
+    
+    case asc(FQUniversalKeyPathSimple)
+    case desc(FQUniversalKeyPathSimple)
+    
+    public var description: String {
+        switch self {
+        case .asc(let v): return "\(v.queryValue) ASC"
+        case .desc(let v): return "\(v.queryValue) DESC"
+        }
+    }
+    
+    public var query: String {
+        return description
+    }
+}
