@@ -29,9 +29,9 @@ try FQL()
     .select(\PetType.name, as: "petType")
     .select(.count(\PetToy.id), as: "petToysQuantity")
     .from(User.self)
-    .join(.left, Pet.self, where: FQWhere(\Pet.id == \User.idPet))
-    .join(.left, PetType.self, where: FQWhere(\PetType.id == \Pet.idType))
-    .join(.left, PetToy.self, where: FQWhere(\PetToy.idPet == \Pet.id))
+    .join(.left, Pet.self, where: \Pet.id == \User.idPet)
+    .join(.left, PetType.self, where: \PetType.id == \Pet.idType)
+    .join(.left, PetToy.self, where: \PetToy.idPet == \Pet.id)
     .groupBy(\User.id, \Pet.id, \PetType.id, \PetToy.id)
     .execute(on: conn)
     .decode(PublicUser.self) // -> Future<[PublicUser]> 🔥🔥🔥
@@ -59,7 +59,7 @@ Edit your `Package.swift`
 
 ```swift
 //add this repo to dependencies
-.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.4.16")
+.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.4.17")
 //and don't forget about targets
 //"FluentQuery"
 ```
@@ -167,11 +167,11 @@ func getListOfCars(_ req: Request) throws -> Future<[PublicCar]> {
         .select(.row(EngineType.self), as: "engineType")
         .select(.row(GearboxType.self), as: "gearboxType")
         .from(Car.self)
-        .join(.left, Brand.self, where: FQWhere(\Brand.id == \Car.idBrand))
-        .join(.left, Model.self, where: FQWhere(\Model.id == \Car.idModel))
-        .join(.left, BodyType.self, where: FQWhere(\BodyType.id == \Car.idBodyType))
-        .join(.left, EngineType.self, where: FQWhere(\EngineType.id == \Car.idEngineType))
-        .join(.left, GearboxType.self, where: FQWhere(\GearboxType.id == \Car.idGearboxType))
+        .join(.left, Brand.self, where: \Brand.id == \Car.idBrand)
+        .join(.left, Model.self, where: \Model.id == \Car.idModel)
+        .join(.left, BodyType.self, where: \BodyType.id == \Car.idBodyType)
+        .join(.left, EngineType.self, where: \EngineType.id == \Car.idEngineType)
+        .join(.left, GearboxType.self, where: \GearboxType.id == \Car.idGearboxType)
         .groupBy(\Car.id, \Brand.id, \Model.id, \BodyType.id, \EngineType.id, \GearboxType.id)
         .orderBy(FQOrderBy(\Brand.value, .ascending)
           .and(\Model.value, .ascending)
@@ -279,7 +279,30 @@ _About `FQWhere` please read below_
 
 `.where(FQWhere)`
 
-`FQWhere(predicate).and(predicate).or(predicate).and(FQWhere).or(FQWhere)`
+##### You can write where predicate two ways
+
+First is object oriented
+```swift
+FQWhere(predicate).and(predicate).or(predicate).and(FQWhere).or(FQWhere)
+```
+
+Second is predicate oriented
+
+_Example for AND statements_
+```swift
+\User.email == "sam@example.com" && \User.password == "qwerty" && \User.active == true
+```
+
+_Example for OR statements_
+```swift
+\User.email == "sam@example.com" || \User.email == "james@example.com" || \User.email == "bob@example.com"
+```
+
+_Example for  both AND and OR statements_
+```swift
+\User.email == "sam@example.com" && FQWhere(\User.role == .admin || \User.role == .staff)
+```
+_What FQWhere() doing here? It groups OR statements into round brackets to achieve `a AND (b OR c)` sql code._
 
 ##### What `predicate` is?
 It may be `KeyPath operator KeyPath` or `KeyPath operator Value`
