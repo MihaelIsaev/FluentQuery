@@ -173,9 +173,7 @@ func getListOfCars(_ req: Request) throws -> Future<[PublicCar]> {
         .join(.left, EngineType.self, where: \EngineType.id == \Car.idEngineType)
         .join(.left, GearboxType.self, where: \GearboxType.id == \Car.idGearboxType)
         .groupBy(\Car.id, \Brand.id, \Model.id, \BodyType.id, \EngineType.id, \GearboxType.id)
-        .orderBy(FQOrderBy(\Brand.value, .asc)
-          .and(\Model.value, .asc)
-        )
+        .orderBy(.asc(\Brand.value), .asc(\Model.value))
         .execute(on: conn)
         .decode(PublicCar.self)
   }
@@ -392,8 +390,13 @@ groupBy.and(\Model.id)
 ```
 
 #### Order by
+
 ```swift
 .orderBy(FQOrderBy(\Car.year, .asc).and(someAlias.k(\.name), .desc))
+```
+or
+```swift
+.orderBy(.asc(\Car.year), .desc(someAlias.k(\.name)))
 ```
 
 #### Offset
