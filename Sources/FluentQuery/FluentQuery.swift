@@ -100,37 +100,37 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     }
     
     @discardableResult
-    public func select<M>(_ func: FQAggregate.FunctionWithKeyPath<M>, as: String) -> Self where M: FQUniversalKeyPath {
+    public func select<M>(_ func: FQAggregate.FunctionWithKeyPath<M>, as: String? = nil) -> Self where M: FQUniversalKeyPath {
         select.func(`func`,  as: `as`)
         return self
     }
     
     @discardableResult
-    public func select<M>(_ func: FQJSON.FunctionWithModelAlias<M>, as: String) -> Self where M: Model {
+    public func select<M>(_ func: FQJSON.FunctionWithModelAlias<M>, as: String? = nil) -> Self where M: Model {
         select.func(`func`, as: `as`)
         return self
     }
     
     @discardableResult
-    public func select<M>(_ func: FQJSON.FunctionWithModel<M>, as: String) -> Self where M: Model {
+    public func select<M>(_ func: FQJSON.FunctionWithModel<M>, as: String? = nil) -> Self where M: Model {
         select.func(`func`, as: `as`)
         return self
     }
     
     @discardableResult
-    public func select<M, V>(_ func: FQJSON.FuncOptionKP<M, V>, as: String) -> Self where M: Model {
+    public func select<M, V>(_ func: FQJSON.FuncOptionKP<M, V>, as: String? = nil) -> Self where M: Model {
         select.func(`func`, as: `as`)
         return self
     }
     
     @discardableResult
-    public func select<M, V>(_ func: FQJSON.FuncOptionAKP<M, V>, as: String) -> Self where M: Model {
+    public func select<M, V>(_ func: FQJSON.FuncOptionAKP<M, V>, as: String? = nil) -> Self where M: Model {
         select.func(`func`, as: `as`)
         return self
     }
     
     @discardableResult
-    public func select<T>(_ func: FQJSON.FunctionWithSubquery<T>, as: String) -> Self where T: FQPart {
+    public func select<T>(_ func: FQJSON.FunctionWithSubquery<T>, as: String? = nil) -> Self where T: FQPart {
         select.func(`func`, as: `as`)
         return self
     }
