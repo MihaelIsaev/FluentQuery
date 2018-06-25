@@ -2,9 +2,17 @@ import Foundation
 import Fluent
 
 public class FQOrderBy: FQPart {
-    public enum Mode: String {
-        case descending = "DESC"
-        case ascending = "ASC"
+    public enum Mode {
+        case descending, ascending, desc, asc
+        
+        var query: String {
+            switch self {
+            case .descending: fallthrough
+            case .desc: return "DESC"
+            case .ascending: fallthrough
+            case .asc: return "ASC"
+            }
+        }
     }
     
     public struct Data: FQPart {
@@ -22,7 +30,7 @@ public class FQOrderBy: FQPart {
         }
         
         public var query: String {
-            return "\(path) \(mode.rawValue)"
+            return "\(path) \(mode.query)"
         }
     }
     
