@@ -23,7 +23,7 @@ struct PublicUser: Codable {
     var petType: String
     var petToysQuantity: Int
 }
-try FluentQuery()
+try FQL()
     .select(all: User.self)
     .select(\Pet.name, as: "petName")
     .select(\PetType.name, as: "petType")
@@ -39,7 +39,7 @@ try FluentQuery()
 
 # Intro
 
-It's a swift lib that gives ability to build complex raw SQL-queries in a more easy way using KeyPaths.
+It's a swift lib that gives ability to build complex raw SQL-queries in a more easy way using KeyPaths. I call it **FQL** 😎
 
 Built for Vapor3 and depends on `Fluent` package because it uses `Model.reflectProperty(forKey:)` method to decode KeyPaths.
 
@@ -59,7 +59,7 @@ Edit your `Package.swift`
 
 ```swift
 //add this repo to dependencies
-.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.4.2")
+.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.4.15")
 //and don't forget about targets
 //"FluentQuery"
 ```
@@ -82,10 +82,10 @@ First of all you need to import the lib
 import FluentQuery
 ```
 
-Then create `FluentQuery` object to do some building and get raw query string
+Then create `FQL` object to do some building and get raw query string
 
 ```swift
-let query = FluentQuery()
+let query = FQL()
 //some building
 let rawQuery: String = query.build()
 ```
@@ -156,7 +156,7 @@ Here's example request code for that situation
 func getListOfCars(_ req: Request) throws -> Future<[PublicCar]> {
   return req.requestPooledConnection(to: .psql).flatMap { conn -> EventLoopFuture<[PublicCar]> in
       defer { try? req.releasePooledConnection(conn, to: .psql) }
-      return FluentQuery()
+      return FQL()
         .select(distinct: \Car.id)
         .select(\Car.year, as: "year")
         .select(\Car.color, as: "color")
@@ -221,17 +221,17 @@ As you can see we've build complex query to get all depended values and decoded 
 #### The reason #1 is KeyPaths!
 If you will change your models in the future you'll have to remember where you used links to this model properties and rewrite them manually and if you forgot one you will get headache in production. But with KeyPaths you will be able to compile your project only while all links to the models properties are up to date. Even better, you will be able to use `refactor` functionality of Xcode! 😄
 #### The reason #2 is `if/else` statements
-With `FluentQuery`'s query builder you can use `if/else` wherever you need. And it's super convenient to compare with using `if/else` while createing raw query string. 😉
+With `FQL`'s query builder you can use `if/else` wherever you need. And it's super convenient to compare with using `if/else` while createing raw query string. 😉
 #### The reason #3
 It is faster than multiple consecutive requests
 #### The reason #4
 You can join on join on join on join on join on join 😁😁😁 
 
-With this lib you can do real complex queries! 🔥 And you still flexible cause you can use if/else statements while building and even create two separate queries with the same basement using `let separateQuery = FluentQuery(copy: originalQuery)` 🕺
+With this lib you can do real complex queries! 🔥 And you still flexible cause you can use if/else statements while building and even create two separate queries with the same basement using `let separateQuery = FQL(copy: originalQuery)` 🕺
 
 ### Methods
 
-The list of the methods which `FluentQuery` provide with
+The list of the methods which `FQL` provide with
 
 #### Select
 These methods will add fields which will be used between `SELECT` and `FROM`
@@ -417,7 +417,7 @@ but also it accept function as value, here's the list of available functions
 
 When you write complex query you can several joins or subqueries to the same table and you need to use aliases for that like `"Cars" as c`
 
-So with FluentQuery you can create aliases like this
+So with FQL you can create aliases like this
 
 ```swift
 let aliasBrand = FQAlias<Brand>("b")
@@ -441,7 +441,7 @@ aliasEngineType.k(\.value)
 `.execute(on: PostgreSQLConnection)`
 
 ```swift
-try FluentQuery().select(all: User.self).execute(on: conn)
+try FQL().select(all: User.self).execute(on: conn)
 ```
 
 ### Decoding query
@@ -449,7 +449,7 @@ try FluentQuery().select(all: User.self).execute(on: conn)
 `.decode(Decodable.Type, dateDecodingstrategy: JSONDecoder.DateDecodingStrategy?)`
 
 ```swift
-try FluentQuery().select(all: User.self).execute(on: conn).decode(PublicUser.self)
+try FQL().select(all: User.self).execute(on: conn).decode(PublicUser.self)
 ```
 
 by default date decoding strategy is `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'` which is compatible with postgres `timestamp`
@@ -457,7 +457,7 @@ by default date decoding strategy is `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'` which is com
 but you can specify custom DateDecodingStrategy like this
 
 ```swift
-try FluentQuery().select(all: User.self).execute(on: conn).decode(PublicUser.self, dateDecodingStrategy: .secondsSince1970)
+try FQL().select(all: User.self).execute(on: conn).decode(PublicUser.self, dateDecodingStrategy: .secondsSince1970)
 ```
 
 or like this
@@ -465,7 +465,7 @@ or like this
 ```swift
 let formatter = DateFormatter()
 formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-try FluentQuery().select(all: User.self).execute(on: conn).decode(PublicUser.self, dateDecodingStrategy: .formatted(formatter))
+try FQL().select(all: User.self).execute(on: conn).decode(PublicUser.self, dateDecodingStrategy: .formatted(formatter))
 ```
 
 
