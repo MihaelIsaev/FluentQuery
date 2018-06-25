@@ -91,6 +91,18 @@ public class FQSelect: FQPart {
         return self
     }
     
+    @discardableResult
+    public func `func`<T>(_ func: FQJSON.FunctionWithFunctionWithModelAlias<T>, as: String? = nil) -> Self where T: Model {
+        _append(`func`.func.roundBracketted, `as`)
+        return self
+    }
+    
+    @discardableResult
+    public func field(_ subquery: FluentQuery, as: String? = nil) -> Self {
+        _append(subquery.query.roundBracketted, `as`)
+        return self
+    }
+    
     private func _append(_ field: String, _ as: String? = nil) {
         var string = "\(field)"
         if let `as` = `as` {

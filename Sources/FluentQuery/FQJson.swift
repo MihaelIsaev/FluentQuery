@@ -144,6 +144,8 @@ extension FQJSON {
         
         case row(String) //m
         case rows(String) //m
+        case toJSON(String) //m
+        case jsonAgg(String) //m
         case extractEpochFromTime(String) //kp
         case count(String) //kp
         case countWhere(String, String) //kp, w
@@ -155,7 +157,12 @@ extension FQJSON {
             case .row:
                 description = "SELECT to_jsonb(%)"
             case .rows:
-                description = "SELECT COALESCE(NULLIF(jsonb_agg(%)::TEXT, '[null]'), '[]')::JSONB"
+                description = "SELECT COALESCE(jsonb_agg(%) FILTER (WHERE % IS NOT NULL), $$[]$$::JSONB)"
+                //description = "SELECT COALESCE(jsonb_agg(%) FILTER (WHERE % IS NOT NULL), $$[]$$::JSONB)"
+            case .toJSON:
+                description = "to_jsonb(%)"
+            case .jsonAgg:
+                description = "jsonb_agg(%)"
             case .extractEpochFromTime:
                 description = "extract(epoch from %)"
             case .count:
@@ -174,6 +181,8 @@ extension FQJSON {
             switch self {
             case .row: fallthrough
             case .rows: fallthrough
+            case .toJSON: fallthrough
+            case .jsonAgg: fallthrough
             case .extractEpochFromTime: fallthrough
             case .count:
                 return description.replacingOccurrences(of: valueKey, with: "\(value)")
@@ -194,6 +203,10 @@ extension FQJSON {
             case let .row(b):
                 value = b
             case let .rows(b):
+                value = b
+            case let .toJSON(b):
+                value = b
+            case let .jsonAgg(b):
                 value = b
             case let .extractEpochFromTime(t):
                 value = t
@@ -286,12 +299,14 @@ extension FQJSON {
     public enum FunctionWithModelAlias<T>: FQJSONFuncOption where T: Model {
         case row(FQAlias<T>)
         case rows(FQAlias<T>)
+        case toJSON(FQAlias<T>)
         case none()
         
         var mirror: Functions {
             switch self {
             case .row(let v): return .row("\(v.alias.doubleQuotted)")
             case .rows(let v): return .rows("\(v.alias.doubleQuotted)")
+            case .toJSON(let v): return .toJSON("\(v.alias.doubleQuotted)")
             case .none: return .empty()
             }
         }
@@ -348,13 +363,13 @@ extension FQJSON {
     public enum FunctionWithSubquery<T>: FQJSONFuncOption where T: FQPart {
         case row(T)
         case rows(T)
-        case none()
+        case jsonAgg(T)
         
         var mirror: Functions {
             switch self {
             case .row(let v): return .row("\(v.query.roundBracketted)")
             case .rows(let v): return .rows("\(v.query.roundBracketted)")
-            case .none: return .empty()
+            case .jsonAgg(let v): return .jsonAgg("\(v.query.roundBracketted)")
             }
         }
         
@@ -371,6 +386,35 @@ extension FQJSON {
         }
         
         public static func ==(lhs: FunctionWithSubquery, rhs: FunctionWithSubquery) -> Bool {
+            return lhs.func == rhs.func
+        }
+    }
+    
+    //MARK: Mirror for FunctionWithModelAlias functions
+    public enum FunctionWithFunctionWithModelAlias<T>: FQJSONFuncOption where T: Model {
+        case toJSON(FunctionWithModelAlias<T>)
+        case jsonAgg(FunctionWithModelAlias<T>)
+        
+        var mirror: Functions {
+            switch self {
+            case .toJSON(let v): return .toJSON("\(v.func.query.roundBracketted)")
+            case .jsonAgg(let v): return .jsonAgg("\(v.func.query.roundBracketted)")
+            }
+        }
+        
+        public var description: String {
+            return mirror.description
+        }
+        
+        var `func`: String {
+            return mirror.func
+        }
+        
+        var value: Any {
+            return mirror.value
+        }
+        
+        public static func ==(lhs: FunctionWithFunctionWithModelAlias, rhs: FunctionWithFunctionWithModelAlias) -> Bool {
             return lhs.func == rhs.func
         }
     }
