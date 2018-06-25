@@ -59,7 +59,7 @@ Edit your `Package.swift`
 
 ```swift
 //add this repo to dependencies
-.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.4.17")
+.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.4.18")
 //and don't forget about targets
 //"FluentQuery"
 ```
@@ -173,8 +173,8 @@ func getListOfCars(_ req: Request) throws -> Future<[PublicCar]> {
         .join(.left, EngineType.self, where: \EngineType.id == \Car.idEngineType)
         .join(.left, GearboxType.self, where: \GearboxType.id == \Car.idGearboxType)
         .groupBy(\Car.id, \Brand.id, \Model.id, \BodyType.id, \EngineType.id, \GearboxType.id)
-        .orderBy(FQOrderBy(\Brand.value, .ascending)
-          .and(\Model.value, .ascending)
+        .orderBy(FQOrderBy(\Brand.value, .asc)
+          .and(\Model.value, .asc)
         )
         .execute(on: conn)
         .decode(PublicCar.self)
@@ -393,7 +393,7 @@ groupBy.and(\Model.id)
 
 #### Order by
 ```swift
-.orderBy(FQOrderBy(\Car.year, .ascending).and(someAlias.k(\.name), .descending))
+.orderBy(FQOrderBy(\Car.year, .asc).and(someAlias.k(\.name), .desc))
 ```
 
 #### Offset
