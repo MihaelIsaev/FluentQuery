@@ -43,7 +43,8 @@ It's a swift lib that gives ability to build complex raw SQL-queries in a more e
 
 Built for Vapor3 and depends on `Fluent` package because it uses `Model.reflectProperty(forKey:)` method to decode KeyPaths.
 
-For now I developing it for Postgres queries so it is with Postgres's SQL-syntax only.
+For now it support Postgres's SQL-syntax only. But I'm working on MySQL support and it will be available soon.
+If you're looking for MySQL support please feel free to file an issue with future request to let me know that you need it.
 
 Now it supports: query with most common predicates, building json objects in select, subqueries, subquery into json, joins, aggregate functions, etc.
 
