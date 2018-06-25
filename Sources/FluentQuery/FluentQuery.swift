@@ -22,6 +22,8 @@ public enum FluentQueryPredicateOperator: String {
     case inFulltext = "@@"
 }
 
+public typealias FQL = FluentQuery
+
 public class FluentQuery: FQPart, CustomStringConvertible {
     public var select: FQSelect = FQSelect()
     public var froms: [FQPart] = []
