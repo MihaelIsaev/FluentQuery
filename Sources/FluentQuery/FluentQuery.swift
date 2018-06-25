@@ -184,15 +184,30 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     }
     
     @discardableResult
+    public func join<T>(_ mode: FQJoinMode, _ table: T.Type, where: FQPredicateGenericType) -> Self where T: Model {
+        return join(mode, table, where: FQWhere(`where`))
+    }
+    
+    @discardableResult
     public func join<T>(_ mode: FQJoinMode, _ table: FQAlias<T>, where: FQWhere) -> Self where T: Model {
         joins.append(FQJoin(mode, table: table, where: `where`))
         return self
     }
     
     @discardableResult
+    public func join<T>(_ mode: FQJoinMode, _ table: FQAlias<T>, where: FQPredicateGenericType) -> Self where T: Model {
+        return join(mode, table, where: FQWhere(`where`))
+    }
+    
+    @discardableResult
     public func join<T>(_ mode: FQJoinMode, subquery: FluentQuery, alias: FQAlias<T>, where: FQWhere) -> Self where T: Model {
         joins.append(FQJoin(mode, subquery: subquery, alias: alias, where: `where`))
         return self
+    }
+    
+    @discardableResult
+    public func join<T>(_ mode: FQJoinMode, subquery: FluentQuery, alias: FQAlias<T>, where: FQPredicateGenericType) -> Self where T: Model {
+        return join(mode, subquery: subquery, alias: alias, where: FQWhere(`where`))
     }
     
     @discardableResult
@@ -206,6 +221,11 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     }
     
     @discardableResult
+    public func `where`(_ predicate: FQPredicateGenericType) -> Self {
+        return `where`(FQWhere(predicate))
+    }
+    
+    @discardableResult
     public func having(_ where: FQWhere) -> Self {
         if let w = self.having {
             w.joinAnotherInstance(`where`, by: "AND")
@@ -213,6 +233,11 @@ public class FluentQuery: FQPart, CustomStringConvertible {
             self.having = `where`
         }
         return self
+    }
+    
+    @discardableResult
+    public func having(_ predicate: FQPredicateGenericType) -> Self {
+        return having(FQWhere(predicate))
     }
     
     @discardableResult

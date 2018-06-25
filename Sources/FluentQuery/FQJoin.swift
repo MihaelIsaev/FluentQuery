@@ -19,12 +19,24 @@ public class FQJoin<T>: FQPart, FQJoinGenericType where T: Model {
         query = FQJoin.build(mode, T.FQType.query, `where`)
     }
     
+    public convenience init(_ mode: FQJoinMode, table: FQTable<T>.Type, where: FQPredicateGenericType) {
+        self.init(mode, table: table, where: FQWhere(`where`))
+    }
+    
     public init(_ mode: FQJoinMode, table: FQAlias<T>, where: FQWhere) {
         query = FQJoin.build(mode, table.query, `where`)
     }
     
+    public convenience init(_ mode: FQJoinMode, table: FQAlias<T>, where: FQPredicateGenericType) {
+        self.init(mode, table: table, where: FQWhere(`where`))
+    }
+    
     public init(_ mode: FQJoinMode, subquery: FluentQuery, alias: FQAlias<T>, where: FQWhere) {
         query = FQJoin.build(mode, subquery.query.roundBracketted.as(alias.alias.doubleQuotted), `where`)
+    }
+    
+    public convenience init(_ mode: FQJoinMode, subquery: FluentQuery, alias: FQAlias<T>, where: FQPredicateGenericType) {
+        self.init(mode, subquery: subquery, alias: alias, where: FQWhere(`where`))
     }
     
     static func build(_ mode: FQJoinMode,_ value: String, _ where: FQWhere) -> String {
