@@ -162,7 +162,7 @@ extension FQJSON {
             case .toJSON:
                 description = "to_jsonb(%)"
             case .jsonAgg:
-                description = "jsonb_agg(%)"
+                description = "SELECT COALESCE(jsonb_agg(%) FILTER (WHERE % IS NOT NULL), $$[]$$::JSONB)"//"jsonb_agg(%)"
             case .extractEpochFromTime:
                 description = "extract(epoch from %)"
             case .count:
