@@ -15,11 +15,11 @@ public enum FQJoinMode: String {
 public class FQJoin<T>: FQPart, FQJoinGenericType where T: Model {
     public var query: String
     
-    public init(_ mode: FQJoinMode, table: FQTable<T>.Type, where: FQWhere) {
+    public init(_ mode: FQJoinMode, table: T.Type, where: FQWhere) {
         query = FQJoin.build(mode, T.FQType.query, `where`)
     }
     
-    public convenience init(_ mode: FQJoinMode, table: FQTable<T>.Type, where: FQPredicateGenericType) {
+    public convenience init(_ mode: FQJoinMode, table: T.Type, where: FQPredicateGenericType) {
         self.init(mode, table: table, where: FQWhere(`where`))
     }
     

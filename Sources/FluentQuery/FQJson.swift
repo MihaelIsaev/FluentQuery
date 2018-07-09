@@ -53,8 +53,8 @@ public class FQJSON: FQPart {
     }
     
     @discardableResult
-    public func field<T>(_ key: String, _ value: FQPart, checkIfModelNull: FQTable<T>.Type) -> Self where T: Model {
-        fields.append("\(key.singleQuotted), CASE WHEN \(checkIfModelNull.alias.doubleQuotted) IS NULL THEN NULL ELSE \(value.query) END")
+    public func field<T>(_ key: String, _ value: FQPart, checkIfModelNull: T.Type) -> Self where T: Model {
+        fields.append("\(key.singleQuotted), CASE WHEN \(checkIfModelNull.FQType.alias.doubleQuotted) IS NULL THEN NULL ELSE \(value.query) END")
         return self
     }
     
@@ -66,7 +66,7 @@ public class FQJSON: FQPart {
     
     @discardableResult
     public func field<T, V>(_ key: String, _ kp: KeyPath<T, V>) -> Self where T: Model {
-        return field(key, T.FQType.self, kp)
+        return field(key, T.self, kp)
     }
     
     @discardableResult
@@ -99,22 +99,22 @@ public class FQJSON: FQPart {
     
     @discardableResult
     public func field<T, V>(_ key: String, _ kp: KeyPath<T, V>, func: String, valueKey: String = "%") -> Self where T: Model {
-        return field(key, T.FQType.self, kp, func: `func`, valueKey: valueKey)
+        return field(key, T.self, kp, func: `func`, valueKey: valueKey)
     }
     
     @discardableResult
-    public func field<T, V>(_ key: String, _ table: FQTable<T>.Type, _ kp: KeyPath<T, V>, func: String, valueKey: String = "%") -> Self where T: Model {
+    public func field<T, V>(_ key: String, _ table: T.Type, _ kp: KeyPath<T, V>, func: String, valueKey: String = "%") -> Self where T: Model {
         return field(key, raw: `func`.replacingOccurrences(of: valueKey, with: FluentQuery.formattedPath(table, kp)))
     }
     
     //MARK: Count with filter
     @discardableResult
     public func field<T, V>(_ key: String, count kp: KeyPath<T, V>, _ wheres: FQWhere...) -> Self where T: Model {
-        return field(key, T.FQType.self, kp) //TODO: implement JSON field COUNT(_) filter (where _)
+        return field(key, T.self, kp) //TODO: implement JSON field COUNT(_) filter (where _)
     }
     
     @discardableResult
-    public func field<T, V>(_ key: String, _ table: FQTable<T>.Type, _ kp: KeyPath<T, V>) -> Self where T: Model {
+    public func field<T, V>(_ key: String, _ table: T.Type, _ kp: KeyPath<T, V>) -> Self where T: Model {
         fields.append("\(key.singleQuotted), \(FluentQuery.formattedPath(table, kp))")
         return self
     }
@@ -234,7 +234,7 @@ extension FQJSON {
         case countWhere(KeyPath<T, V>, FQWhere)
         
         private func formattedPath(_ kp: KeyPath<T, V>) -> String {
-            return FluentQuery.formattedPath(T.FQType.self, kp)
+            return FluentQuery.formattedPath(T.self, kp)
         }
         
         var mirror: Functions {
