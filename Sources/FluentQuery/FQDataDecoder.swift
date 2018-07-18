@@ -119,7 +119,7 @@ fileprivate struct _QueryDataKeyedDecoder<K, Database>: KeyedDecodingContainerPr
                 do {
                     return try decoder.decode(T.self, from: data[1...])
                 } catch {
-                    throw FluentError(identifier: "decodingError", reason: "\(error.localizedDescription) (\(type) nested model)", possibleCauses: [])
+                    throw FluentError(identifier: "decodingError", reason: "\(error) (\(type) nested model)", possibleCauses: [])
                 }
             } else {
                 return nil
