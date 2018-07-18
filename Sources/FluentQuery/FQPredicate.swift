@@ -159,10 +159,10 @@ public class FQPredicate<T>: FQPart, FQPredicateGenericType  where T: FQUniversa
             result.append(formatValue(v))
         }
         return result
-            .replacingOccurrences(of: "= NULL", with: "IS NULL")
             .replacingOccurrences(of: "!= NULL", with: "IS NOT NULL")
-            .replacingOccurrences(of: "= nil", with: "IS NULL")
+            .replacingOccurrences(of: "= NULL", with: "IS NULL")
             .replacingOccurrences(of: "!= nil", with: "IS NOT NULL")
+            .replacingOccurrences(of: "= nil", with: "IS NULL")
     }
 }
 
