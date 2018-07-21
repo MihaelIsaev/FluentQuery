@@ -338,7 +338,7 @@ class OptionalFractionalSecondsDateFormatter: DateFormatter {
         formatter.calendar = Calendar(identifier: .iso8601)
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(identifier: "UTC")
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z" //without milliseconds
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ" //without milliseconds
         return formatter
     }()
     
@@ -346,7 +346,7 @@ class OptionalFractionalSecondsDateFormatter: DateFormatter {
         self.calendar = Calendar(identifier: .iso8601)
         self.locale = Locale(identifier: "en_US_POSIX")
         self.timeZone = TimeZone(identifier: "UTC")
-        self.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z" //with milliseconds
+        self.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SZZZZZ" //with milliseconds
     }
     
     override init() {
