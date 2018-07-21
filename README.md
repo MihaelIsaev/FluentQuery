@@ -501,7 +501,7 @@ formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 try FQL().select(all: User.self).execute(on: conn).decode(PublicUser.self, dateDecodingStrategy: .formatted(formatter))
 ```
 
-or you have to or more different date formats in the same model then you could create your own date formatter like described in [issue #3](https://github.com/MihaelIsaev/FluentQuery/issues/3#issuecomment-406801436)
+or if you have two or more columns with different date format in the same model then you could create your own date formatter like described in [issue #3](https://github.com/MihaelIsaev/FluentQuery/issues/3#issuecomment-406801436)
 
 
 ### Conslusion
