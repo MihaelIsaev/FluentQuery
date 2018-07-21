@@ -484,10 +484,11 @@ try FQL().select(all: User.self).execute(on: conn)
 try FQL().select(all: User.self).execute(on: conn).decode(PublicUser.self)
 ```
 
-by default date decoding strategy is `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'` which is compatible with postgres `timestamp`
+### Custom DateDecodingStrategy
 
-but you can specify custom DateDecodingStrategy like this
+By default date decoding strategy is `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'` which is compatible with postgres `timestamp`
 
+But you can specify custom DateDecodingStrategy like this
 ```swift
 try FQL().select(all: User.self).execute(on: conn).decode(PublicUser.self, dateDecodingStrategy: .secondsSince1970)
 ```
@@ -499,6 +500,8 @@ let formatter = DateFormatter()
 formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 try FQL().select(all: User.self).execute(on: conn).decode(PublicUser.self, dateDecodingStrategy: .formatted(formatter))
 ```
+
+or you have to or more different date formats in the same model then you could create your own date formatter like described in [issue #3](issues/3#issuecomment-406801436)
 
 
 ### Conslusion
