@@ -333,20 +333,12 @@ public struct QueryFieldEncodingContainer<Model: Fluent.Model> {
 /// Custom DateFormatter to parse postgres dates both with milliseconds and without
 /// credits to https://stackoverflow.com/questions/48371082/swift-dateformatter-optional-milliseconds
 class OptionalFractionalSecondsDateFormatter: DateFormatter {
-    static let withoutSeconds: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar(identifier: .iso8601)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone(identifier: "UTC")
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z" //without milliseconds
-        return formatter
-    }()
-    
     func setup() {
         self.calendar = Calendar(identifier: .iso8601)
         self.locale = Locale(identifier: "en_US_POSIX")
         self.timeZone = TimeZone(identifier: "UTC")
-        self.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z" //with milliseconds
+        //with milliseconds and without timezone
+        self.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS'ZZZZZ"
     }
     
     override init() {
@@ -360,9 +352,22 @@ class OptionalFractionalSecondsDateFormatter: DateFormatter {
     }
     
     override func date(from string: String) -> Date? {
+        //with milliseconds and without timezone
         if let result = super.date(from: string) {
             return result
         }
-        return OptionalFractionalSecondsDateFormatter.withoutSeconds.date(from: string)
+        //without milliseconds and without timezone
+        dateFormat = "yyyy-MM-dd HH:mm:ss'ZZZZZ"
+        if let result = super.date(from: string) {
+            return result
+        }
+        //with milliseconds and timezone
+        dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSSZZZZZ"
+        if let result = super.date(from: string) {
+            return result
+        }
+        //without milliseconds and with timezone
+        dateFormat = "yyyy-MM-dd HH:mm:ssZZZZZ"
+        return super.date(from: string)
     }
 }
