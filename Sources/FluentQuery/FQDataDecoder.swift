@@ -93,7 +93,7 @@ fileprivate struct _QueryDataKeyedDecoder<K, Database>: KeyedDecodingContainerPr
         if let dateDecodingStrategy = dateDecodingStrategy {
             self.dateDecodingStrategy = dateDecodingStrategy
         } else {
-            let formatter = OptionalFractionalSecondsDateFormatter()
+            let formatter = FQDateFormatter()
             self.dateDecodingStrategy = .formatted(formatter)
         }
     }
@@ -327,47 +327,5 @@ public struct QueryFieldEncodingContainer<Model: Fluent.Model> {
         let field = try key.makeQueryField()
         let value: T = model[keyPath: key]
         try container.encode(value, forKey: field)
-    }
-}
-
-/// Custom DateFormatter to parse postgres dates both with milliseconds and without
-/// credits to https://stackoverflow.com/questions/48371082/swift-dateformatter-optional-milliseconds
-class OptionalFractionalSecondsDateFormatter: DateFormatter {
-    func setup() {
-        self.calendar = Calendar(identifier: .iso8601)
-        self.locale = Locale(identifier: "en_US_POSIX")
-        self.timeZone = TimeZone(identifier: "UTC")
-        //with milliseconds and without timezone
-        self.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS'ZZZZZ"
-    }
-    
-    override init() {
-        super.init()
-        setup()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setup()
-    }
-    
-    override func date(from string: String) -> Date? {
-        //with milliseconds and without timezone
-        if let result = super.date(from: string) {
-            return result
-        }
-        //without milliseconds and without timezone
-        dateFormat = "yyyy-MM-dd HH:mm:ss'ZZZZZ"
-        if let result = super.date(from: string) {
-            return result
-        }
-        //with milliseconds and timezone
-        dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSSZZZZZ"
-        if let result = super.date(from: string) {
-            return result
-        }
-        //without milliseconds and with timezone
-        dateFormat = "yyyy-MM-dd HH:mm:ssZZZZZ"
-        return super.date(from: string)
     }
 }
