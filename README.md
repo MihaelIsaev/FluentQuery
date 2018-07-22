@@ -83,13 +83,59 @@ First of all you need to import the lib
 import FluentQuery
 ```
 
-Then create `FQL` object to do some building and get raw query string
+Then create `FQL` object, build your SQL query using methods described below and as first step just print it as a raw string
 
 ```swift
 let query = FQL()
 //some building
-let rawQuery: String = query.build()
+print("rawQuery: \(query)")
 ```
+
+### Several examples
+
+#### 1. Simple
+
+```swift
+// SELECT * FROM "User" WHERE age > 18
+let fql = FQL().select(all: User.self)
+               .from(User.self)
+               .where(\User.age > 18)
+               .execute(on: conn)
+               .decode(User.self)
+```
+
+#### 2. Simple with join
+
+```swift
+// SELECT u.*, r.name as region FROM "User" as u WHERE u.age > 18 LEFT JOIN "UserRegion" as r ON u.idRegion = r.id
+let fql = FQL().select(all: User.self)
+               .select(\UserRegion.name)
+               .from(User.self)
+               .where(\User.age > 18)
+               .join(.left, UserRegion.self, where: \User.idRegion == \UserRegion.id)
+               .execute(on: conn)
+               .decode(UserWithRegion.self)
+```
+
+#### 3. Medium 🙂 with query into jsonB obejcts
+
+```swift
+// SELECT (SELECT to_jsonb(u)) as user, (SELECT to_jsonb(r)) as region FROM "User" as u WHERE u.age > 18 LEFT JOIN "UserRegion" as r ON u.idRegion = r.id
+let fql = FQL().select(.row(User.self), as: "user")
+               .select(.row(UserRegion.self), as: "region")
+               .from(User.self)
+               .where(\User.age > 18)
+               .join(.left, UserRegion.self, where: \User.idRegion == \UserRegion.id)
+               .execute(on: conn)
+               .decode(UserWithRegion.self)
+// in this case UserWithRegion struct will look like this
+struct UserWithRegion: Codable {
+    var user: User
+    var region: UserRegion
+}
+```
+
+#### 4. Complex
 
 Let's take a look how to use it with some example request
 
