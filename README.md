@@ -491,16 +491,27 @@ but also it accept function as value, here's the list of available functions
 
 ### Aliases
 
-`FQAlias<OriginalClass>(aliasKey)`
+`FQAlias<OriginalClass>(aliasKey)` or `OriginalClass.alias(aliasKey)`
 
-When you write complex query you can several joins or subqueries to the same table and you need to use aliases for that like `"Cars" as c`
+Also you can use static alias `OriginalClass.alias` if you need only one its variation
+
+And you can generate random alias `OriginalClass.randomAlias` but keep in mind that every call to `randomAlias` generates new alias as it's computed property
+
+#### What's that for?
+
+When you write complex query you may have several joins or subqueries to the same table and you need to use aliases for that like `"Cars" as c`
+
+#### Usage
 
 So with FQL you can create aliases like this
 
 ```swift
-let aliasBrand = FQAlias<Brand>("b")
-let aliasModel = FQAlias<Model>("m")
-let aliasEngineType = FQAlias<EngineType>("e")
+//"CarBrand" as b
+let aliasBrand = CarBrand.alias("b")
+//"CarModel" as m
+let aliasModel = CarModel.alias("m")
+//"EngineType" as e
+let aliasEngineType = EngineType.alias("e")
 ```
 
 and you can use KeyPaths of original tables referenced to these aliases like this
