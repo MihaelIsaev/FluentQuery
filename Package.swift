@@ -16,7 +16,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-nio.git", from: "1.0.0"),
         ],
     targets: [
-        .target(name: "FluentQuery", dependencies: ["PostgreSQL"]),
+        .target(name: "FluentQuery", dependencies: ["PostgreSQL", "NIO"]),
         .testTarget(name: "FluentQueryTests", dependencies: ["FluentQuery", "PostgreSQL"]),
         ]
 )
