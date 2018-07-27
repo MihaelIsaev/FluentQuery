@@ -319,6 +319,7 @@ public func <= <T>(lhs: T, rhs: T.AType.RawValue) -> FQPredicateGenericType wher
 }
 
 // <= aggregate function
+//TODO: should be implemented in reverse way too, like lhs: K, rhs: FQAggregate.FunctionWithKeyPath
 public func <= <M, K>(lhs: FQAggregate.FunctionWithKeyPath<M>, rhs: K) -> FQPredicateGenericType where M: FQUniversalKeyPath, K: Numeric {
     return FQPredicate(kp: lhs, operation: .lessThanOrEqual, value: .simpleAny(rhs))
 }
