@@ -1,10 +1,30 @@
 import Foundation
 import FluentPostgreSQL
-import PostgreSQL
-import Vapor //remove together with Abort(.internalServerError)
+import Fluent
 
-typealias PostgreSQLRow = [PostgreSQL.PostgreSQLColumn: PostgreSQL.PostgreSQLData]
+public typealias PostgreSQLRow = [PostgreSQL.PostgreSQLColumn: PostgreSQL.PostgreSQLData]
 typealias PostgreSQLInternalRow = [PostgreSQLColumn: PostgreSQLData]
+
+protocol FQLErrorProtocol: LocalizedError {
+    var identifier: String { get }
+    var reason: String { get }
+}
+
+struct FQLError: FQLErrorProtocol {
+    var identifier: String
+    var reason: String {
+        return _description
+    }
+    var errorDescription: String? { return _description }
+    var failureReason: String? { return _description }
+    
+    private var _description: String
+    
+    init(identifier: String, reason: String) {
+        self.identifier = identifier
+        self._description = reason
+    }
+}
 
 extension EventLoopFuture where T == [PostgreSQLRow] {
     public func decode<T>(_ to: T.Type, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> EventLoopFuture<[T]> where T: Decodable {
@@ -14,22 +34,26 @@ extension EventLoopFuture where T == [PostgreSQLRow] {
 
 extension Array where Element == PostgreSQLRow {
     func convert() throws -> [PostgreSQLInternalRow] {
-        return map { row in
-            var internalRow: PostgreSQLInternalRow = [:]
-            row.keys.forEach { column in
-                guard let data = row[column] else { throw Abort(.internalServerError) }
-                if let binary = data.binary {
-                    internalRow[PostgreSQLColumn(tableOID: column.tableOID, name: column.name)] = PostgreSQLData(data.type, storage: Storage.convert(binary) )
-                } else if let text = data.text {
-                    internalRow[PostgreSQLColumn(tableOID: column.tableOID, name: column.name)] = PostgreSQLData(data.type, storage: Storage.convert(text) )
-                }
-            }
-            return internalRow
-        }
+        return try map { try $0.convert() }
     }
     
     public func decode<T>(_ to: T.Type, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> [T] where T: Decodable {
-        return try map { try $0.decode(T.self, dateDecodingStrategy: dateDecodingStrategy) }
+        return try map { try $0.convert().decode(T.self, dateDecodingStrategy: dateDecodingStrategy) }
+    }
+}
+
+extension Dictionary where Key == PostgreSQL.PostgreSQLColumn, Value == PostgreSQL.PostgreSQLData {
+    func convert() throws -> PostgreSQLInternalRow {
+        var internalRow: PostgreSQLInternalRow = [:]
+        try keys.forEach { column in
+            guard let data = self[column] else { throw FQLError(identifier: "internalServerError", reason: "") }
+            if let binary = data.binary {
+                internalRow[PostgreSQLColumn(tableOID: column.tableOID, name: column.name)] = PostgreSQLData(type: PostgreSQLDataFormat(data.type.raw), storage: PostgreSQLData.Storage.convert(binary) )
+            } else if let text = data.text {
+                internalRow[PostgreSQLColumn(tableOID: column.tableOID, name: column.name)] = PostgreSQLData(type: PostgreSQLDataFormat(data.type.raw), storage: PostgreSQLData.Storage.convert(text) )
+            }
+        }
+        return internalRow
     }
 }
 
@@ -84,14 +108,10 @@ fileprivate final class _QueryDataDecoder<Database>: Decoder where Database: Que
     func singleValueContainer() throws -> SingleValueDecodingContainer { throw unsupported() }
 }
 
-private func unsupported() -> FluentError {
-    return FluentError(
+private func unsupported() -> FQLError {
+    return FQLError(
         identifier: "rowDecode",
-        reason: "PostgreSQL rows only support a flat, keyed structure `[String: T]`",
-        suggestedFixes: [
-            "You can conform nested types to `PostgreSQLJSONType` or `PostgreSQLArrayType`. (Nested types must be `PostgreSQLDataCustomConvertible`.)"
-        ],
-        possibleCauses: []
+        reason: "PostgreSQL rows only support a flat, keyed structure `[String: T]` You can conform nested types to `PostgreSQLJSONType` or `PostgreSQLArrayType`. (Nested types must be `PostgreSQLDataCustomConvertible`.)"
     )
 }
 
@@ -138,12 +158,13 @@ fileprivate struct _QueryDataKeyedDecoder<K, Database>: KeyedDecodingContainerPr
                 do {
                     return try decoder.decode(T.self, from: data[1...])
                 } catch {
-                    throw FluentError(identifier: "decodingError", reason: "\(error) (\(type) nested model)", possibleCauses: [])
+                    throw FQLError(identifier: "decodingError", reason: "\(error) (\(type) nested model)")
                 }
             } else {
                 return nil
             }
         }
+        
         return try PostgreSQLDataDecoder().decode(T.self, from: data)//queryDataParse(T.self, from: data)
     }
     
@@ -166,7 +187,7 @@ fileprivate struct _QueryDataKeyedDecoder<K, Database>: KeyedDecodingContainerPr
     func decodeIfPresent<T>(_ type: T.Type, forKey key: K) throws -> T? where T: Decodable { return try _parse(T.self, forKey: key) }
     func decode<T>(_ type: T.Type, forKey key: K) throws -> T where T: Decodable {
         guard let t = try _parse(T.self, forKey: key) else {
-            throw FluentError(identifier: "missingValue", reason: "No value found for key: \(key)", possibleCauses: [])
+            throw FQLError(identifier: "missingValue", reason: "No value found for key: \(key)")
         }
         return t
     }
@@ -260,7 +281,7 @@ extension KeyPath where Root: Model {
     /// See QueryFieldRepresentable.makeQueryField()
     public func makeQueryField() throws -> QueryField {
         guard let key = try Root.reflectProperty(forKey: self) else {
-            throw FluentError(identifier: "reflectProperty", reason: "No property reflected for \(self)", possibleCauses: [])
+            throw FQLError(identifier: "reflectProperty", reason: "No property reflected for \(self)")
         }
         return QueryField(entity: Root.entity, name: key.path.first ?? "")
     }

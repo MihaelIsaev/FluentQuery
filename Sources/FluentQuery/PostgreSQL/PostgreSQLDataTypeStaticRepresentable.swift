@@ -1,3 +1,6 @@
+import Foundation
+import Core
+
 /// Statically representable as a `PostgreSQLDataType`.
 public protocol PostgreSQLDataTypeStaticRepresentable {
     /// Appropriate PostgreSQL column type for storing this type.
