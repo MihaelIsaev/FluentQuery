@@ -87,6 +87,12 @@ public protocol FQUniversalKeyPathSimple {
     var queryValue: String { get }
 }
 
+extension String: FQUniversalKeyPathSimple {
+    public var queryValue: String {
+        return self.doubleQuotted
+    }
+}
+
 public protocol FQUniversalKeyPath {
     associatedtype AType
     associatedtype AModel: Model
