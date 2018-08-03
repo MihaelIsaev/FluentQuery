@@ -60,7 +60,7 @@ Edit your `Package.swift`
 
 ```swift
 //add this repo to dependencies
-.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.4.25")
+.package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.4.26")
 //and don't forget about targets
 //"FluentQuery"
 ```
@@ -293,6 +293,8 @@ So to add what you want to select call these methods one by one
 | .select(.average(\Car.value), as: "average") | AVG("Cars".value) as "average" |
 | .select(.min(\Car.value), as: "min") | MIN("Cars".value) as "min" |
 | .select(.max(\Car.value), as: "max") | MAX("Cars".value) as "max" |
+| .select(.extract(.day, .timestamp, \Car.createdAt), as: "creationDay") | EXTRACT(DAY FROM "Cars".value) as "creationDay" |
+| .select(.extract(.day, .interval, "40 days 1 minute"), as: "creationDay") | EXTRACT(DAY FROM INTERVAL '40 days 1 minute') as "creationDay" |
 
 _BTW, read about aliases below_
 
