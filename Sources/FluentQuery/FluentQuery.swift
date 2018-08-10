@@ -148,6 +148,12 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     }
     
     @discardableResult
+    public func from(_ subQuery: FQL, as asKey: String) -> Self {
+        froms.append(subQuery.query.roundBracketted + " as " + asKey.doubleQuotted)
+        return self
+    }
+    
+    @discardableResult
     public func from(_ db: String, as asKey: String) -> Self {
         froms.append("\(db.doubleQuotted) as \(asKey.doubleQuotted)")
         return self
