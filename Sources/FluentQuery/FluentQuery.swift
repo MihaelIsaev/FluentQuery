@@ -23,7 +23,7 @@ public enum FluentQueryPredicateOperator: String {
 
 public typealias FQL = FluentQuery
 
-public class FluentQuery: FQPart, CustomStringConvertible {
+public class FluentQuery: FQPart {
     public var select: FQSelect = FQSelect()
     public var froms: [FQPart] = []
     public var joins: [FQJoinGenericType] = []
@@ -33,6 +33,7 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     public var orderBy: FQOrderBy?
     public var offset: Int?
     public var limit: Int?
+    public var over: FQPart?
     public var unions: [FluentQuery] = []
     
     public init(copy from: FluentQuery? = nil) {
@@ -144,6 +145,17 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     @discardableResult
     public func select(_ subquery: FluentQuery, as: String? = nil) -> Self {
         select.field(subquery, as: `as`)
+        return self
+    }
+    
+    @discardableResult
+    public func over(_ over: FQOver, as asKey: String? = nil) -> Self {
+        var string = over.query
+        if let asKey = asKey {
+            string.append(" as ")
+            string.append(asKey.doubleQuotted)
+        }
+        self.over = string
         return self
     }
     
@@ -377,7 +389,9 @@ public class FluentQuery: FQPart, CustomStringConvertible {
     public func execute<D, T>(on conn: D, andDecode to: [T].Type, withDateDecodingStrategy strategy: JSONDecoder.DateDecodingStrategy? = nil) throws -> Future<[T]> where D: PostgreSQLConnection, T: Decodable {
         return try execute(on: conn).decode(T.self, dateDecodingStrategy: strategy)
     }
-    
+}
+
+extension FluentQuery: CustomStringConvertible {
     public var description: String {
         return query
     }
