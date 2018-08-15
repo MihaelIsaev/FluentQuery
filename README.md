@@ -299,12 +299,13 @@ So to add what you want to select call these methods one by one
 
 _BTW, read about aliases and `FQOver` below_
 
-#### Over
+#### Window functions
 
-If you need to use window `over` function like
+If you need to use window functions like rowNumber, rank, dense_rank, etc. like this
 ```sql
 rowNumber() OVER(partition BY "Record".title, "Record".tag ORDER BY "Record".priority ASC) as "rowNumber"
 ```
+(refer to: https://www.postgresql.org/docs/current/static/functions-window.html)
 
 then you could build it like this
 ```swift
