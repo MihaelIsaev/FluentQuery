@@ -33,7 +33,6 @@ public class FluentQuery: FQPart {
     public var orderBy: FQOrderBy?
     public var offset: Int?
     public var limit: Int?
-    public var over: FQPart?
     public var unions: [FluentQuery] = []
     
     public init(copy from: FluentQuery? = nil) {
@@ -149,13 +148,8 @@ public class FluentQuery: FQPart {
     }
     
     @discardableResult
-    public func over(_ over: FQOver, as asKey: String? = nil) -> Self {
-        var string = over.query
-        if let asKey = asKey {
-            string.append(" as ")
-            string.append(asKey.doubleQuotted)
-        }
-        self.over = string
+    public func select(by func: FQOverFunction, over: FQOver, as: String? = nil) -> Self {
+        select.field(by: `func`, over: over, as: `as`)
         return self
     }
     

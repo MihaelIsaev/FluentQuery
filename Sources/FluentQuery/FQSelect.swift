@@ -103,6 +103,15 @@ public class FQSelect: FQPart {
         return self
     }
     
+    @discardableResult
+    public func field(by func: FQOverFunction, over: FQOver, as: String? = nil) -> Self {
+        var string = `func`.query
+        string.append(FluentQueryNextLine)
+        string.append(over.query)
+        _append(string, `as`)
+        return self
+    }
+    
     private func _append(_ field: String, _ as: String? = nil) {
         var string = "\(field)"
         if let `as` = `as` {
