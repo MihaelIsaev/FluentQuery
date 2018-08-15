@@ -295,9 +295,9 @@ So to add what you want to select call these methods one by one
 | .select(.max(\Car.value), as: "max") | MAX("Cars".value) as "max" |
 | .select(.extract(.day, .timestamp, \Car.createdAt), as: "creationDay") | EXTRACT(DAY FROM "Cars".value) as "creationDay" |
 | .select(.extract(.day, .interval, "40 days 1 minute"), as: "creationDay") | EXTRACT(DAY FROM INTERVAL '40 days 1 minute') as "creationDay" |
-| .select(by: .rowNumber, over: <FQOver>, as: "rowNumber") | rowNumber() OVER (partition BY <EXPRESSION> ORDER BY <SOMETHING>) as "rowNumber" |
+| .select(by: .rowNumber, over: `FQOver`, as: "rowNumber") | rowNumber() OVER (partition BY `EXPRESSION` ORDER BY `SOMETHING`) as "rowNumber" |
 
-_BTW, read about aliases and FQOver below_
+_BTW, read about aliases and `FQOver` below_
 
 #### Over
 
