@@ -298,6 +298,24 @@ So to add what you want to select call these methods one by one
 
 _BTW, read about aliases below_
 
+#### Over
+
+If you need to use window `over` function like
+```sql
+OVER(partition BY "Record".title, "Record".tag ORDER BY "Record".priority ASC) as something
+```
+
+then you could build it like this
+```swift
+let fqo = FQOver(.partition)
+            .by(\Record.title, \Record.tag)
+            .orderBy(.asc(\Record.priority))
+```
+and then use it in your query like this
+```swift
+let FQL().select(\Record.id).over(fqo, as: "test").from(Record.self)
+```
+
 #### From
 
 | Method  | SQL equivalent |
