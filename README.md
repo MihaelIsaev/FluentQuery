@@ -54,6 +54,11 @@ If you have great ideas of how to improve this package write me (@iMike) in [Vap
 
 Hope it'll be useful for someone :)
 
+### ⚠️ This lib is going to be updated with SwifQL under the hood
+You can continue using it if you need its syntax and magic functions like `.row`.
+
+But for the newcomers I suggest to use [SwifQL](https://github.com/MihaelIsaev/SwifQL) directly instead, cause it's more flexible and there almost no magic, cause it tries to repeat pure SQL syntax.
+
 ### Install through Swift Package Manager
 
 Edit your `Package.swift`
