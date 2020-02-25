@@ -14,6 +14,8 @@
 
 <br>
 
+### ⚠️ This lib is DEPRECATED ⚠️ please use [SwifQL](https://github.com/SwifQL/SwifQL) with [Bridges](https://github.com/SwifQL/Bridges)
+
 # Quick Intro
 
 ```swift
@@ -42,22 +44,6 @@ try FQL()
 It's a swift lib that gives ability to build complex raw SQL-queries in a more easy way using KeyPaths. I call it **FQL** 😎
 
 Built for Vapor3 and depends on `Fluent` package because it uses `Model.reflectProperty(forKey:)` method to decode KeyPaths.
-
-For now it support Postgres's SQL-syntax only. But I'm working on MySQL support and it will be available soon.
-If you're looking for MySQL support please feel free to file an issue with future request to let me know that you need it.
-
-Now it supports: query with most common predicates, building json objects in select, subqueries, subquery into json, joins, aggregate functions, etc.
-
-Note: the project is in active development state and it may cause huge syntax changes before v1.0.0
-
-If you have great ideas of how to improve this package write me (@iMike) in [Vapor's discord chat](http://vapor.team) or just send pull request.
-
-Hope it'll be useful for someone :)
-
-### ⚠️ This lib is going to be updated with SwifQL under the hood
-You can continue using it if you need its syntax and magic functions like `.row`.
-
-But for the newcomers I suggest to use [SwifQL](https://github.com/MihaelIsaev/SwifQL) directly instead, cause it's more flexible and there almost no magic, cause it tries to repeat pure SQL syntax.
 
 ### Install through Swift Package Manager
 
