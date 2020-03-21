@@ -7,11 +7,11 @@
     <a href="https://swift.org">
         <img src="https://img.shields.io/badge/swift-4.1-brightgreen.svg" alt="Swift 4.1">
     </a>
-    <a href="https://twitter.com/VaporRussia">
-        <img src="https://img.shields.io/badge/twitter-VaporRussia-5AA9E7.svg" alt="Twitter">
+    <a href="https://discord.gg/q5wCPYv">
+        <img src="https://img.shields.io/badge/CLICK_HERE_TO_DISCUSS_THIS_LIB-SWIFT.STREAM-FD6F32.svg" alt="Swift.Stream">
     </a>
 </p>
-<p align="center"><a href="https://discord.gg/q5wCPYv">SWIFT.STREAM COMMUNITY IN DISCORD</a></p>
+
 <br>
 
 ### ⚠️ This lib is DEPRECATED ⚠️ please use [SwifQL](https://github.com/SwifQL/SwifQL) with [Bridges](https://github.com/SwifQL/Bridges)
