@@ -11,7 +11,7 @@
         <img src="https://img.shields.io/badge/twitter-VaporRussia-5AA9E7.svg" alt="Twitter">
     </a>
 </p>
-
+<p align="center"><a href="https://discord.gg/q5wCPYv">SWIFT.STREAM COMMUNITY IN DISCORD</a></p>
 <br>
 
 ### ⚠️ This lib is DEPRECATED ⚠️ please use [SwifQL](https://github.com/SwifQL/SwifQL) with [Bridges](https://github.com/SwifQL/Bridges)
